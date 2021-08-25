@@ -1,16 +1,20 @@
 package com.example.myapp;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.myapp.Base.BaseActivity;
+import com.alibaba.android.arouter.facade.annotation.Route;
+import com.example.myapp.Base.BaseActionBar;
+import com.example.myapp.Base.BaseTitleActivity;
 import com.example.myapp.HomePage.HomePageFragment;
 import com.example.myapp.Mine.MineFragment;
 import com.example.myapp.OfficialAccount.OfficialAccountFragment;
@@ -20,13 +24,39 @@ import com.google.android.material.tabs.TabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-public class MainActivity extends BaseActivity {
+@Route(path = "/app/MainActivity")
+public class MainActivity extends BaseTitleActivity {
 
     @BindView(R.id.vp_main)
     NoScrollViewPager vpMain;
     @BindView(R.id.tb_main)
     TabLayout tbMain;
+    @BindView(R.id.iv_head)
+    ImageView ivHead;
+    @BindView(R.id.tv_username)
+    TextView tvUsername;
+    @BindView(R.id.tv_integral)
+    TextView tvIntegral;
+    @BindView(R.id.tv_integral_level)
+    TextView tvIntegralLevel;
+    @BindView(R.id.tv_integral_rank)
+    TextView tvIntegralRank;
+    @BindView(R.id.tv_collect_article)
+    TextView tvCollectArticle;
+    @BindView(R.id.tv_share_article)
+    TextView tvShareArticle;
+    @BindView(R.id.tv_collect_web)
+    TextView tvCollectWeb;
+    @BindView(R.id.tv_share_project)
+    TextView tvShareProject;
+    @BindView(R.id.tv_change_password)
+    TextView tvChangePassword;
+    @BindView(R.id.tv_improve_personal_information)
+    TextView tvImprovePersonalInformation;
+    @BindView(R.id.bt_back_login)
+    Button btBackLogin;
+    @BindView(R.id.drawerlayout_mine)
+    DrawerLayout drawerlayoutMine;
     private MainAdapter adapter;
 
     private Fragment[] mfragments = {new HomePageFragment(), new ProjectFragment(), new OfficialAccountFragment(), new MineFragment()};
@@ -42,13 +72,32 @@ public class MainActivity extends BaseActivity {
     TextView tabText;
     ImageView imageView;
     String stitle;
+//    BaseActionBar actionBar;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected void findViews(Bundle savedInstanceState) {
         ButterKnife.bind(this);
+        BaseActionBar actionBar = findViewById(R.id.base_bar);
+        actionBar.setTitle("首页");
+        actionBar.hideBack(true);
+        actionBar.hideMine(false);
+        actionBar.setImgR(getDrawable(R.mipmap.find));
+        actionBar.setImgROnClickListener(v -> findOnclick());
+        actionBar.setMineOnClickListener(v -> mineOnclick());
         initView();
+    }
+
+    private void findOnclick() {
+
+    }
+
+    private void mineOnclick() {
+        drawerlayoutMine.openDrawer(Gravity.LEFT);
+    }
+
+    @Override
+    public int setLayoutId() {
+        return R.layout.activity_main;
     }
 
     private void initView() {
@@ -67,6 +116,7 @@ public class MainActivity extends BaseActivity {
             imageView = view.findViewById(R.id.iv_tab1);
 
             tabText.setText(mtitles[i]);
+
             imageView.setImageResource(unImage[i]);
 
             if (i == def) {
@@ -122,6 +172,8 @@ public class MainActivity extends BaseActivity {
         for (int i = 0; i < mtitles.length; i++) {
             if (mtitles[i].equals(stitle)) {
                 imageView.setImageResource(Image[i]);
+                BaseActionBar baseActionBar = findViewById(R.id.base_bar);
+                baseActionBar.setTitle(mtitles[i]);//实现切换fragment时切换标题内容
             }
         }
 
@@ -152,4 +204,5 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
 }

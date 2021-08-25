@@ -1,12 +1,9 @@
 package com.example.myapp.HomePage;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,9 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.example.myapp.Bean.ArticleBean;
 import com.example.myapp.Bean.ArticleTopBean;
-import com.example.myapp.Bean.BannerBean;
 import com.example.myapp.Constant;
-import com.example.myapp.MainActivity;
 import com.example.myapp.R;
 
 import java.util.List;

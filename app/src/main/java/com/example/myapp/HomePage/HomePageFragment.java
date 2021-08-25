@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +20,7 @@ import com.example.myapp.Bean.BannerBean;
 import com.example.myapp.Constant;
 import com.example.myapp.Internet.WanAndroidApiService;
 import com.example.myapp.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.youth.banner.Banner;
 import com.youth.banner.indicator.CircleIndicator;
 
@@ -26,6 +29,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,7 +41,19 @@ public class HomePageFragment extends BaseFragment {
 
     @BindView(R.id.banner_homepage)
     Banner bannerHomepage;
-//    @BindView(R.id.rv_homepage_article)
+    @BindView(R.id.fab_homepage)
+    FloatingActionButton fabHomepage;
+    @BindView(R.id.scrollView)
+    NestedScrollView scrollView;
+//    @BindView(R.id.iv_menu_mine)
+//    ImageView ivMenuMine;
+//    @BindView(R.id.iv_homepage_find)
+//    ImageView ivHomepageFind;
+    @BindView(R.id.rv_homepage)
+    RecyclerView rvHomepage;
+//    @BindView(R.id.drawerlayout_mine)
+//    DrawerLayout drawerlayoutMine;
+    //    @BindView(R.id.rv_homepage_article)
 //    RecyclerView rvHomepageArticle;
 //    @BindView(R.id.rv_homepage_article_top)
 //    RecyclerView rvHomepageArticleTop;
@@ -48,20 +64,17 @@ public class HomePageFragment extends BaseFragment {
 
     private List<Object> list;
 
+    RecyclerView articleRecycleView;
+
     //适配器
     private HomePageBannerAdapter bannerAdapter;
-    private HomePageArticleAdapter articleAdapter;
-    private HomePageArticleTopAdapter articleTopAdapter;
 
     private HomePageFragmentAdapter adapter;
 
-//    private RecyclerView articleRecycleView;
-//    private RecyclerView articleTopRecycleView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_homepage, container, false);
         ButterKnife.bind(this, view);
         initView(view);
@@ -77,11 +90,11 @@ public class HomePageFragment extends BaseFragment {
 
     private void initView(View view) {
         initBannerView();
-        RecyclerView articleRecycleView = view.findViewById(R.id.rv_homepage);
+        articleRecycleView = view.findViewById(R.id.rv_homepage);
         LinearLayoutManager articlemanager = new LinearLayoutManager(getActivity());//创建线性布局管理器
         articlemanager.setOrientation(LinearLayoutManager.VERTICAL);//添加垂直布局
         articleRecycleView.setLayoutManager(articlemanager);//将线性布局管理器添加到recyclerview中
-        adapter = new HomePageFragmentAdapter(getContext(),articleList,articleTopList);//实例化适配器
+        adapter = new HomePageFragmentAdapter(getContext(), articleList, articleTopList);//实例化适配器
         articleRecycleView.setAdapter(adapter);//添加适配器
     }
 
@@ -138,13 +151,14 @@ public class HomePageFragment extends BaseFragment {
     }
 
     private void initBannerView() {
-        bannerAdapter = new com.example.myapp.HomePage.HomePageBannerAdapter(bannerList);
+        bannerAdapter = new HomePageBannerAdapter(bannerList);
         bannerHomepage.setAdapter(bannerAdapter)
                 .isAutoLoop(true)//自动循环
                 .setIndicator(new CircleIndicator(getActivity()))
                 .addBannerLifecycleObserver(this)
                 .start();
     }
+
     /**
      * 轮播图数据
      */
@@ -169,5 +183,17 @@ public class HomePageFragment extends BaseFragment {
                 Toast.makeText(getActivity(), "数据获取失败", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @OnClick({R.id.fab_homepage,})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.fab_homepage:
+                scrollView.smoothScrollTo(0, 0);//ScrollView置顶
+                break;
+//            case R.id.iv_menu_mine:
+//                drawerlayoutMine.openDrawer(Gravity.LEFT);
+//                break;
+        }
     }
 }

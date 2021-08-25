@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--标题栏-->
+    <declare-styleable name="BaseActionBar">
+        <attr name="back" format="boolean"/>//返回键是否显示
+        <attr name="mine" format="boolean"/>//菜单键是否显示
+        <attr name="title" format="string"/>//中间标题
+        <attr name="rightTitle" format="string"/>//右侧文字
+        <attr name="imgR" format="reference"/> //右侧图片
+    </declare-styleable>
+
+</resources>

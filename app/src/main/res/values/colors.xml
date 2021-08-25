@@ -10,6 +10,9 @@
 
     <color name="colorPrimary">#1890ff</color>
 
+    <!--    分割线-->
+    <color name="line">#E0E0E0</color>
+
     <color name="ivory">#FFFFF0</color><!--象牙色 -->
     <color name="lightyellow">#FFFFE0</color><!--亮黄色 -->
     <color name="yellow">#FFFF00</color><!--黄色 -->
