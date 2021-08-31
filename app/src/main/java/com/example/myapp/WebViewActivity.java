@@ -3,10 +3,12 @@ package com.example.myapp;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Autowired;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.blankj.utilcode.util.ToastUtils;
 import com.example.myapp.Base.BaseActionBar;
 import com.example.myapp.Base.BaseTitleActivity;
 
@@ -20,6 +22,7 @@ public class WebViewActivity extends BaseTitleActivity {
     WebView webview;
     @Autowired(name = "path")
     public String path;
+
 
     @Override
     protected void findViews(Bundle savedInstanceState) {

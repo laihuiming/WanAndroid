@@ -6,27 +6,30 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawerlayout_mine"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <com.example.myapp.Util.NoScrollViewPager
-            android:id="@+id/vp_main"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tb_main"
-            app:tabIndicatorHeight="0dp"
-            android:layout_below="@+id/vp_main"
-            android:layout_width="match_parent"
-            android:layout_height="65dp" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+                <com.example.myapp.Util.NoScrollViewPager
+                    android:id="@+id/vp_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tb_main"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/vp_main"
+                app:tabIndicatorHeight="0dp" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

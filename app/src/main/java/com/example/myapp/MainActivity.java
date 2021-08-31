@@ -1,5 +1,6 @@
 package com.example.myapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -7,23 +8,49 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
+import com.alibaba.android.arouter.launcher.ARouter;
+import com.blankj.utilcode.util.ToastUtils;
 import com.example.myapp.Base.BaseActionBar;
 import com.example.myapp.Base.BaseTitleActivity;
+import com.example.myapp.Bean.LogoutBean;
+import com.example.myapp.Bean.UserInfoBean;
 import com.example.myapp.HomePage.HomePageFragment;
+import com.example.myapp.Internet.WanAndroidApiService;
 import com.example.myapp.Mine.MineFragment;
 import com.example.myapp.OfficialAccount.OfficialAccountFragment;
 import com.example.myapp.Project.ProjectFragment;
+import com.example.myapp.Util.AddCookiesInterceptor;
 import com.example.myapp.Util.NoScrollViewPager;
+import com.example.myapp.Util.SaveCookiesInterceptor;
 import com.google.android.material.tabs.TabLayout;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.header.FalsifyFooter;
+import com.scwang.smart.refresh.header.FalsifyHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 @Route(path = "/app/MainActivity")
 public class MainActivity extends BaseTitleActivity {
 
@@ -31,14 +58,10 @@ public class MainActivity extends BaseTitleActivity {
     NoScrollViewPager vpMain;
     @BindView(R.id.tb_main)
     TabLayout tbMain;
-    @BindView(R.id.iv_head)
-    ImageView ivHead;
     @BindView(R.id.tv_username)
     TextView tvUsername;
     @BindView(R.id.tv_integral)
     TextView tvIntegral;
-    @BindView(R.id.tv_integral_level)
-    TextView tvIntegralLevel;
     @BindView(R.id.tv_integral_rank)
     TextView tvIntegralRank;
     @BindView(R.id.tv_collect_article)
@@ -57,7 +80,26 @@ public class MainActivity extends BaseTitleActivity {
     Button btBackLogin;
     @BindView(R.id.drawerlayout_mine)
     DrawerLayout drawerlayoutMine;
+    @BindView(R.id.tv_head)
+    ImageView tvHead;
+    @BindView(R.id.tv_userid)
+    TextView tvUserid;
+    @BindView(R.id.tv_userem)
+    TextView tvUserem;
+    @BindView(R.id.tv_message_center)
+    TextView tvMessageCenter;
+    @BindView(R.id.tv_integral_rule)
+    TextView tvIntegralRule;
+    @BindView(R.id.ll_basic_operation)
+    CardView llBasicOperation;
+    @BindView(R.id.tv_level)
+    TextView tvLevel;
+    @BindView(R.id.tv_rank)
+    TextView tvRank;
     private MainAdapter adapter;
+
+    UserInfoBean userInfoData;
+
 
     private Fragment[] mfragments = {new HomePageFragment(), new ProjectFragment(), new OfficialAccountFragment(), new MineFragment()};
     private String[] mtitles = {"首页", "项目", "公众号", "我的"};
@@ -72,6 +114,7 @@ public class MainActivity extends BaseTitleActivity {
     TextView tabText;
     ImageView imageView;
     String stitle;
+    private Context context = getContext();
 //    BaseActionBar actionBar;
 
     @Override
@@ -95,6 +138,38 @@ public class MainActivity extends BaseTitleActivity {
         drawerlayoutMine.openDrawer(Gravity.LEFT);
     }
 
+    private void initUserInfo() {//带cookie请求
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        OkHttpClient client = builder.addInterceptor(new AddCookiesInterceptor(context))
+                .addInterceptor(new SaveCookiesInterceptor(context))
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constant.BaseUrl)//获取url
+                .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(client)
+                .build();
+        WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
+        Call<UserInfoBean> call = wanAndroidApiService.loadUserInfo();//获取首页置顶文章列表
+        call.enqueue(new Callback<UserInfoBean>() {
+            @Override
+            public void onResponse(Call<UserInfoBean> call, Response<UserInfoBean> response) {
+                userInfoData = response.body();
+                    tvUsername.setText(userInfoData.getData().getUserInfo().getUsername());
+                    tvUserid.setText("id:" + userInfoData.getData().getUserInfo().getId());
+                    tvUserem.setText("E-mail:" + userInfoData.getData().getUserInfo().getEmail());
+                    tvIntegral.setText(" " + userInfoData.getData().getCoinInfo().getCoinCount());
+                    tvLevel.setText("Level:" + userInfoData.getData().getCoinInfo().getLevel());
+                    tvRank.setText("排名：" + userInfoData.getData().getCoinInfo().getRank());
+            }
+
+            @Override
+            public void onFailure(Call<UserInfoBean> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "数据请求失败，请检查网络", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     public int setLayoutId() {
         return R.layout.activity_main;
@@ -103,6 +178,8 @@ public class MainActivity extends BaseTitleActivity {
     private void initView() {
         initViewPager();
         initTabLayout();
+        initUserInfo();
+
     }
 
     private void initTabLayout() {
@@ -205,4 +282,42 @@ public class MainActivity extends BaseTitleActivity {
         });
     }
 
+    @OnClick(R.id.bt_back_login)
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bt_back_login:
+                logout();
+                finish();
+                ARouter.getInstance().build(Constant.LOGIN).navigation();
+        }
+    }
+
+    //退出，并清除本地cookie
+    private void logout() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constant.BaseUrl)//获取url
+                .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
+        Call<LogoutBean> call = wanAndroidApiService.logout();//获取首页置顶文章列表
+        call.enqueue(new Callback<LogoutBean>() {
+            @Override
+            public void onResponse(Call<LogoutBean> call, Response<LogoutBean> response) {
+                Toast.makeText(MainActivity.this, "退出成功，返回登录界面", Toast.LENGTH_SHORT).show();
+                SaveCookiesInterceptor.clearCookie(context);//清除本地cookie
+            }
+
+            @Override
+            public void onFailure(Call<LogoutBean> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "数据请求失败，请检查网络", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SaveCookiesInterceptor.clearCookie(context);//清除本地cookie
+    }
 }

@@ -3,88 +3,181 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="#EEEBEB"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/ll_head"
-            android:layout_width="wrap_content"
-            android:layout_height="120dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/iv_head"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center" />
-
-            <TextView
-                android:id="@+id/tv_username"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:text="xxxx"
-                android:textSize="25sp" />
-        </LinearLayout>
         <androidx.cardview.widget.CardView
-            android:id="@+id/ll_integral"
-            android:layout_marginTop="30dp"
             app:cardCornerRadius="10dp"
             android:elevation="4dp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/ll_head"
-            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/rl_userinfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+               <ImageView
+                   android:id="@+id/tv_head"
+                   android:src="@mipmap/error"
+                   android:layout_width="70dp"
+                   android:layout_height="70dp"/>
+                <LinearLayout
+                    android:layout_toRightOf="@id/tv_head"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_username"
+                        android:text="username"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="22sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_userid"
+                        android:text="id"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="15sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_userem"
+                        android:text="email"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="15sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_below="@+id/rl_userinfo"
+            android:id="@+id/inteargl"
+            app:cardCornerRadius="10dp"
+            android:elevation="4dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:text="消息中心"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"/>
+                    android:paddingLeft="27dp"
+                    android:textSize="15sp"
+                    android:text="个人积分"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <include layout="@layout/split_line_color" />
                 <LinearLayout
+                    android:background="@color/white"
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp">
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_marginLeft="15dp"
+                        android:src="@mipmap/dian"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"/>
+                    <TextView
+                        android:id="@+id/tv_message_center"
+                        android:textSize="15sp"
+                        android:text="消息中心"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_marginLeft="15dp"
+                        android:src="@mipmap/dian"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"/>
+                    <TextView
+                        android:textSize="15sp"
+                        android:text="本站积分"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
                     <TextView
                         android:id="@+id/tv_integral"
-                        android:text="本站积分：xxx"
+                        android:textSize="15sp"
+                        android:textColor="@color/red"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="wrap_content"/>
                     <TextView
-                        android:id="@+id/tv_integral_level"
-                        android:text="lvN"
+                        android:id="@+id/tv_level"
+                        android:textColor="@color/white"
+                        android:background="@color/green"
+                        android:textSize="15sp"
+                        android:layout_marginLeft="5dp"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/tv_rank"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginLeft="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_marginLeft="15dp"
+                        android:src="@mipmap/dian"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"/>
+                    <TextView
+                        android:id="@+id/tv_integral_rule"
+                        android:textSize="15sp"
+                        android:text="积分规则"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
                     <TextView
                         android:id="@+id/tv_integral_rank"
-                        android:text="排名9999999"
+                        android:layout_marginLeft="20dp"
+                        android:textSize="15sp"
+                        android:text="积分排行榜"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="wrap_content"/>
                 </LinearLayout>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
         <androidx.cardview.widget.CardView
             android:id="@+id/ll_mine"
-            android:layout_marginTop="30dp"
-            android:layout_width="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="30dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="10dp"
             android:elevation="4dp"
-            android:layout_below="@+id/ll_integral"
+            android:layout_below="@+id/inteargl"
             android:layout_centerHorizontal="true">
 
             <LinearLayout
-                android:layout_width="350dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
@@ -92,43 +185,39 @@
 
                 <TextView
                     android:id="@+id/tv_collect_article"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:background="@drawable/bg_article"
-                    android:layout_marginTop="15dp"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
                     android:text="收藏文章"
-                    android:textSize="22sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/tv_share_article"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/bg_article"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
                     android:text="分享文章"
-                    android:textSize="22sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/tv_collect_web"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/bg_article"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
                     android:text="收藏网站"
-                    android:textSize="22sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/tv_share_project"
-                    android:layout_width="200dp"
+                    android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/bg_article"
-                    android:gravity="center"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="15dp"
                     android:text="分享项目"
-                    android:textSize="22sp" />
+                    android:textSize="18sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -136,13 +225,14 @@
             android:id="@+id/ll_basic_operation"
             app:cardCornerRadius="10dp"
             android:elevation="4dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="30dp"
             android:layout_below="@+id/ll_mine"
             android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <LinearLayout
-            android:layout_width="350dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:gravity="center"
@@ -150,22 +240,21 @@
 
             <TextView
                 android:id="@+id/tv_change_password"
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:background="@drawable/bg_article_2"
-                android:gravity="center"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
                 android:text="修改密码"
-                android:textSize="22sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tv_improve_personal_information"
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/bg_article_2"
-                android:gravity="center"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
                 android:text="完善个人信息"
-                android:textSize="22sp" />
+                android:textSize="18sp" />
         </LinearLayout>
         </androidx.cardview.widget.CardView>
         <androidx.cardview.widget.CardView

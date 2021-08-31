@@ -21,6 +21,12 @@ import com.example.myapp.Constant;
 import com.example.myapp.Internet.WanAndroidApiService;
 import com.example.myapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.youth.banner.Banner;
 import com.youth.banner.indicator.CircleIndicator;
 
@@ -62,15 +68,14 @@ public class HomePageFragment extends BaseFragment {
     private List<ArticleBean.ArticleDataBean.ArticleDatasBean> articleList = new ArrayList<>();
     private List<ArticleTopBean.ArticleTopDataBean> articleTopList = new ArrayList<>();
 
-    private List<Object> list;
-
     RecyclerView articleRecycleView;
 
     //适配器
     private HomePageBannerAdapter bannerAdapter;
 
     private HomePageFragmentAdapter adapter;
-
+    public int page = 0;
+    SmartRefreshLayout smartRefreshLayout;
 
     @Nullable
     @Override
@@ -78,15 +83,41 @@ public class HomePageFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_homepage, container, false);
         ButterKnife.bind(this, view);
         initView(view);
-        initData();
+        initData(page);
+        smartRefreshLayout =view.findViewById(R.id.refreshlayout);
+        smartRefreshLayout.setRefreshHeader(new ClassicsHeader(getContext()));
+        smartRefreshLayout.setRefreshFooter(new ClassicsFooter(getContext()));
+        smartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(200/*,false*/);//传入false表示刷新失败
+                refresh();
+            }
+        });
+        smartRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadMore(200/*,false*/);//传入false表示加载失败
+                loadMore();
+            }
+        });
         return view;
     }
 
-    private void initData() {
+    protected void loadMore() {//加载更多
+        page++;
+        initArticleData(page);
+    }
+    protected void refresh() {//刷新
+        initArticleData(page);
+    }
+
+    public void initData(int page) {
         initBannerData();
         initArticleTopData();
-        initArticleData();
+        initArticleData(page);
     }
+
 
     private void initView(View view) {
         initBannerView();
@@ -127,14 +158,14 @@ public class HomePageFragment extends BaseFragment {
     /**
      * 文章数据
      */
-    private void initArticleData() {
+    private void initArticleData(int page) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BaseUrl)//获取url
                 .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-        Call<ArticleBean> call = wanAndroidApiService.loadArticle();//获取首页文章列表
+        Call<ArticleBean> call = wanAndroidApiService.loadArticle(page);//获取首页文章列表
         call.enqueue(new Callback<ArticleBean>() {
             @Override
             public void onResponse(Call<ArticleBean> call, Response<ArticleBean> response) {

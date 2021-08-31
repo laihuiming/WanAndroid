@@ -15,6 +15,14 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.example.myapp.R;
 import com.gyf.immersionbar.ImmersionBar;
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.ClassicsHeader;
+import com.scwang.smart.refresh.header.FalsifyFooter;
+import com.scwang.smart.refresh.header.FalsifyHeader;
+import com.scwang.smart.refresh.layout.SmartRefreshLayout;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,8 +36,6 @@ public abstract class BaseTitleActivity extends BaseActivity {
     ViewGroup llNetWorkError;
 
     ViewGroup llNoData;
-
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,9 +56,7 @@ public abstract class BaseTitleActivity extends BaseActivity {
         llContent = findViewById(R.id.ll_content);
         llNetWorkError = findViewById(R.id.ll_net_work_error);
         llNoData = findViewById(R.id.ll_no_data);
-
     }
-
 
     private void initListener() {
         baseActionBar.setBackOnClickListener(v -> onclick());
