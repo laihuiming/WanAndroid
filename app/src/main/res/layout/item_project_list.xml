@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <androidx.cardview.widget.CardView
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -11,33 +12,42 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
-
+                android:padding="10dp"
+                android:id="@+id/im_project"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:layout_weight="1"/>
             <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:layout_weight="2">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp">
                 <TextView
                     android:id="@+id/tv_project_title"
+                    android:textSize="22sp"
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
                 <TextView
+                    android:layout_below="@id/tv_project_title"
                     android:id="@+id/tv_project_desc"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="match_parent"/>
+                </LinearLayout>
                 <LinearLayout
                     android:layout_alignParentBottom="true"
                     android:orientation="horizontal"
+                    android:gravity="bottom"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="20dp">
                     <TextView
                         android:id="@+id/tv_project_time"
                         android:layout_width="0dp"
-                        android:layout_weight="6"
+                        android:layout_weight="5"
                         android:layout_height="wrap_content"/>
                     <TextView
                         android:id="@+id/tv_project_author"
@@ -45,7 +55,7 @@
                         android:layout_weight="3"
                         android:layout_height="wrap_content"/>
                     <ImageView
-                        android:id="@+id/tv_project_collect"
+                        android:id="@+id/iv_project_collect"
                         android:layout_weight="1"
                         android:src="@mipmap/collect"
                         android:layout_width="0dp"

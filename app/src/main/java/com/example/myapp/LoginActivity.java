@@ -55,6 +55,7 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.cb_remember)
     AppCompatCheckBox cbRemember;
 
+    private Context context = this;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +90,7 @@ public class LoginActivity extends BaseActivity {
                 } else if (TextUtils.isEmpty(etPassword.getText().toString().trim())) {
                     Toast.makeText(this, "密码别空着啊！！！", Toast.LENGTH_SHORT).show();
                 } else {
+                    SaveCookiesInterceptor.clearCookie(context);//清除本地cookie
                     login();
                 }
                 break;

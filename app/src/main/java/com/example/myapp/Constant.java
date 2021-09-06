@@ -8,9 +8,19 @@ public class Constant {
 
     public static final String WEBVIEW = "/app/WebViewActivity";
 
+    public static final String NAVIGATION = "/app/NavigationActivity";
+
     public static final String MAINACTIVITY = "/app/MainActivity";
 
     public static final String LOGIN = "/app/LoginActivity";
 
     public static final String REGISTER = "/app/RegisterActivity";
+
+    public static final String PROJECT = "/app/ProjectDetailActivity";
+
+    public static final String INTEGRALDETAIL = "/app/IntegralDetailActivity";
+
+    public static final String INTEGRALRANK = "/app/IntegralRankActivity";
+
+    public static final String INTEGRALRULE = "/app/IntegralRuleActivity";
 }

@@ -98,6 +98,7 @@
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/ll_mine_intrgral_detail"
                     android:background="@color/white"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"

@@ -3,8 +3,11 @@ package com.example.myapp.Internet;
 import com.example.myapp.Bean.ArticleBean;
 import com.example.myapp.Bean.ArticleTopBean;
 import com.example.myapp.Bean.BannerBean;
+import com.example.myapp.Bean.IntegralDetailBean;
+import com.example.myapp.Bean.IntegralRankBean;
 import com.example.myapp.Bean.LoginBean;
 import com.example.myapp.Bean.LogoutBean;
+import com.example.myapp.Bean.NavigationBean;
 import com.example.myapp.Bean.ProjectListBean;
 import com.example.myapp.Bean.ProjectTreeBean;
 import com.example.myapp.Bean.RegisterBean;
@@ -74,6 +77,20 @@ public interface WanAndroidApiService {
     Call<UserInfoBean> loadUserInfo();
 
     /**
+     * 积分排行榜
+     * @return
+     */
+    @GET("/coin/rank/1/json")
+    Call<IntegralRankBean> loadIntegralRank();
+
+    /**
+     * 获取个人积分获取列表，需要登录后访问
+     * @return
+     */
+    @GET("/lg/coin/list/1/json")
+    Call<IntegralDetailBean> loadUserIntegral();
+
+    /**
      * 项目分类
      * @return
      */
@@ -88,5 +105,12 @@ public interface WanAndroidApiService {
      */
     @GET("/project/list/{page}/json")
     Call<ProjectListBean> loadProjectList(@Path("page") int page,@Query("cid") int cid);
+
+    /**
+     * 导航数据
+     * @return
+     */
+    @GET("/navi/json")
+    Call<NavigationBean> loadNavigation();
 
 }

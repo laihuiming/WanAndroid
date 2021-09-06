@@ -1,14 +1,20 @@
 package com.example.myapp.Util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import okhttp3.Cookie;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -31,12 +37,11 @@ public class SaveCookiesInterceptor implements Interceptor {
         Request request = chain.request();
         Response response = chain.proceed(request);
         //set-cookie可能为多个
-        if (!response.headers("set-cookie").isEmpty()) {
-            List<String> cookies = response.headers("set-cookie");
+        if (!response.headers("Set-Cookie").isEmpty()) {
+            List<String> cookies = response.headers("Set-Cookie");
             String cookie = encodeCookie(cookies);
             saveCookie(request.url().toString(), request.url().host(), cookie);
         }
-
         return response;
     }
 

@@ -23,8 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NavigationActivity" />
-        <activity android:name=".WebViewActivity" />
+        <activity android:name=".Other.NavigationActivity" />
+        <activity android:name=".Project.ProjectDetailActivity"/>
+        <activity android:name=".Mine.IntegralRuleActivity"/>
+        <activity android:name=".Mine.IntegralRankActivity"/>
+        <activity android:name=".Mine.IntegralDetailActivity"/>
+        <activity android:name=".Other.WebViewActivity" />
         <activity android:name=".MainActivity">
 
         </activity>

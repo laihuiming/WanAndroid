@@ -2,11 +2,13 @@ package com.example.myapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +19,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
-import com.blankj.utilcode.util.ToastUtils;
 import com.example.myapp.Base.BaseActionBar;
 import com.example.myapp.Base.BaseTitleActivity;
 import com.example.myapp.Bean.LogoutBean;
@@ -31,14 +32,6 @@ import com.example.myapp.Util.AddCookiesInterceptor;
 import com.example.myapp.Util.NoScrollViewPager;
 import com.example.myapp.Util.SaveCookiesInterceptor;
 import com.google.android.material.tabs.TabLayout;
-import com.scwang.smart.refresh.footer.ClassicsFooter;
-import com.scwang.smart.refresh.header.ClassicsHeader;
-import com.scwang.smart.refresh.header.FalsifyFooter;
-import com.scwang.smart.refresh.header.FalsifyHeader;
-import com.scwang.smart.refresh.layout.SmartRefreshLayout;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,6 +89,8 @@ public class MainActivity extends BaseTitleActivity {
     TextView tvLevel;
     @BindView(R.id.tv_rank)
     TextView tvRank;
+    @BindView(R.id.ll_mine_intrgral_detail)
+    LinearLayout llMineIntrgralDetail;
     private MainAdapter adapter;
 
     UserInfoBean userInfoData;
@@ -131,7 +126,7 @@ public class MainActivity extends BaseTitleActivity {
     }
 
     private void findOnclick() {
-
+        ARouter.getInstance().build(Constant.NAVIGATION).navigation();
     }
 
     private void mineOnclick() {
@@ -150,17 +145,23 @@ public class MainActivity extends BaseTitleActivity {
                 .client(client)
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-        Call<UserInfoBean> call = wanAndroidApiService.loadUserInfo();//获取首页置顶文章列表
+        Call<UserInfoBean> call = wanAndroidApiService.loadUserInfo();
         call.enqueue(new Callback<UserInfoBean>() {
             @Override
             public void onResponse(Call<UserInfoBean> call, Response<UserInfoBean> response) {
                 userInfoData = response.body();
+                if (userInfoData.getErrorCode() != 0) {
+                    SaveCookiesInterceptor.clearCookie(context);//清除本地cookie
+                    initUserInfo();
+                    Log.e("请求用户信息", "失败");
+                } else {
                     tvUsername.setText(userInfoData.getData().getUserInfo().getUsername());
                     tvUserid.setText("id:" + userInfoData.getData().getUserInfo().getId());
                     tvUserem.setText("E-mail:" + userInfoData.getData().getUserInfo().getEmail());
                     tvIntegral.setText(" " + userInfoData.getData().getCoinInfo().getCoinCount());
                     tvLevel.setText("Level:" + userInfoData.getData().getCoinInfo().getLevel());
                     tvRank.setText("排名：" + userInfoData.getData().getCoinInfo().getRank());
+                }
             }
 
             @Override
@@ -282,13 +283,23 @@ public class MainActivity extends BaseTitleActivity {
         });
     }
 
-    @OnClick(R.id.bt_back_login)
+    @OnClick({R.id.bt_back_login, R.id.tv_integral_rule, R.id.ll_mine_intrgral_detail, R.id.tv_integral_rank})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_back_login:
                 logout();
                 finish();
                 ARouter.getInstance().build(Constant.LOGIN).navigation();
+                break;
+            case R.id.tv_integral_rule:
+                ARouter.getInstance().build(Constant.INTEGRALRULE).navigation();
+                break;
+            case R.id.ll_mine_intrgral_detail:
+                ARouter.getInstance().build(Constant.INTEGRALDETAIL).navigation();
+                break;
+            case R.id.tv_integral_rank:
+                ARouter.getInstance().build(Constant.INTEGRALRANK).navigation();
+
         }
     }
 
@@ -319,5 +330,12 @@ public class MainActivity extends BaseTitleActivity {
     protected void onDestroy() {
         super.onDestroy();
         SaveCookiesInterceptor.clearCookie(context);//清除本地cookie
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 }
