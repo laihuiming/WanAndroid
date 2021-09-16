@@ -3,6 +3,10 @@ package com.example.myapp.Internet;
 import com.example.myapp.Bean.ArticleBean;
 import com.example.myapp.Bean.ArticleTopBean;
 import com.example.myapp.Bean.BannerBean;
+import com.example.myapp.Bean.Collect.CollectListBean;
+import com.example.myapp.Bean.Collect.CollectBean;
+import com.example.myapp.Bean.Collect.CollectToolsBean;
+import com.example.myapp.Bean.Collect.ToolsUpdateBean;
 import com.example.myapp.Bean.IntegralDetailBean;
 import com.example.myapp.Bean.IntegralRankBean;
 import com.example.myapp.Bean.LoginBean;
@@ -12,10 +16,10 @@ import com.example.myapp.Bean.ProjectListBean;
 import com.example.myapp.Bean.ProjectTreeBean;
 import com.example.myapp.Bean.RegisterBean;
 import com.example.myapp.Bean.UserInfoBean;
+import com.example.myapp.Mine.Collect.Collect;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -112,5 +116,73 @@ public interface WanAndroidApiService {
      */
     @GET("/navi/json")
     Call<NavigationBean> loadNavigation();
+
+    /**
+     * 收藏文章列表
+     * @return
+     */
+    @GET("/lg/collect/list/0/json")
+    Call<CollectListBean> loadCollectList();
+
+
+    /**
+     * 收藏
+     * @param id
+     * @return
+     */
+    @POST("/lg/collect/{id}/json")
+    Call<CollectBean> Collect(@Path("id") int id);
+
+    /**
+     * 取消收藏
+     * @param id
+     * @return
+     */
+    @POST("/lg/uncollect_originId/{id}/json")
+    Call<CollectBean> unCollect(@Path("id") int id);
+
+    /**
+     * 站内及站外收藏
+     */
+    @POST("/lg/collect/add/json")
+    Call<CollectBean> collectOut(@Query("title") String title,@Query("author") String author,@Query("link") String link);
+
+    /**
+     * 取消站外收藏
+     */
+    @POST("/lg/uncollect/{id}/json")
+    Call<CollectBean> unCollectOut(@Path("id") int id,@Query("originId") int originId);
+
+    /**
+     * 收藏网站列表
+     * @return
+     */
+    @GET("/lg/collect/usertools/json")
+    Call<CollectToolsBean> loadcollectTools();
+
+    /**
+     * 添加收藏网站
+     * @param name
+     * @param link
+     * @return
+     */
+    @POST("lg/collect/addtool/json")
+    Call<CollectToolsBean> addTool(@Query("name") String name,@Query("link") String link);
+
+    /**
+     * 编辑收藏网站
+     * @param id
+     * @param name
+     * @param link
+     * @return
+     */
+    @POST("/lg/collect/updatetool/json")
+    Call<ToolsUpdateBean> updateTool(@Query("id") Integer id, @Query("name") String name, @Query("link") String link);
+
+    /**
+     * 删除收藏网站
+     */
+    @POST("/lg/collect/deletetool/json")
+    Call<CollectBean> deleteTool(@Query("id") Integer id);
 
 }

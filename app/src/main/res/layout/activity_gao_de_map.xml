@@ -3,10 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+<com.amap.api.maps.MapView
+    android:id="@+id/map"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
 
-    <Button
-        android:id="@+id/bt_gaode_map"
-        android:text="高德地图入口"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 </LinearLayout>

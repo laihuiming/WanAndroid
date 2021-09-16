@@ -99,7 +99,6 @@ public class LoginActivity extends BaseActivity {
 
     //登录请求
     public void login() {
-        Context context = getBaseContext();
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         OkHttpClient client = builder.addInterceptor(new AddCookiesInterceptor(context))
                 .addInterceptor(new SaveCookiesInterceptor(context))

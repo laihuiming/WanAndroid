@@ -3,6 +3,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            keyAlias 'key_store'
+            storeFile file('D:\\key_store')
+            storePassword '123456'
+            keyPassword '123456'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -24,8 +32,10 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable true  //true代表开启  false 关闭
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -107,4 +117,9 @@ dependencies {
 
     //全屏水滴刷新
     implementation 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'
+
+    //高德地图
+    implementation 'com.amap.api:navi-3dmap:latest.integration'
+    implementation 'com.amap.api:search:latest.integration'
+    implementation 'com.amap.api:location:latest.integration'
 }

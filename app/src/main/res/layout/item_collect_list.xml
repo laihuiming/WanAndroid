@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/tv_collect_title"
+        android:layout_marginLeft="15dp"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+    <LinearLayout
+        android:id="@+id/ll_collect"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="作者："
+            android:layout_marginLeft="15dp"
+            android:id="@+id/tv_collect_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:text="分类："
+            android:layout_marginLeft="5dp"
+            android:id="@+id/tv_collect_chapter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+    <TextView
+        android:layout_below="@+id/ll_collect"
+        tools:text="收藏时间："
+        android:layout_marginLeft="15dp"
+        android:id="@+id/tv_collect_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/iv_collect"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:src="@mipmap/collect" />
+    </RelativeLayout>
+    <include layout="@layout/split_line_color" />
+</LinearLayout>

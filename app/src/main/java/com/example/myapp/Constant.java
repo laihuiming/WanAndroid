@@ -23,4 +23,10 @@ public class Constant {
     public static final String INTEGRALRANK = "/app/IntegralRankActivity";
 
     public static final String INTEGRALRULE = "/app/IntegralRuleActivity";
+
+    public static final String COLLECTLIST = "/app/CollectListActivity";
+
+    public static final String USERTOOLS = "/app/UserToolsActivity";
+
+    public static final String GAODEMAP = "/app/GaoDeMapActivity";
 }

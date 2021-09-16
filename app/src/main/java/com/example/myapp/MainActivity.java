@@ -1,6 +1,8 @@
 package com.example.myapp;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -32,6 +34,10 @@ import com.example.myapp.Util.AddCookiesInterceptor;
 import com.example.myapp.Util.NoScrollViewPager;
 import com.example.myapp.Util.SaveCookiesInterceptor;
 import com.google.android.material.tabs.TabLayout;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -123,6 +129,34 @@ public class MainActivity extends BaseTitleActivity {
         actionBar.setImgROnClickListener(v -> findOnclick());
         actionBar.setMineOnClickListener(v -> mineOnclick());
         initView();
+        sHA1(this);
+        Log.e("SHA1:", ":"+sHA1(context));
+        System.out.println("SHA1:"+sHA1(context));
+    }
+    public static String sHA1(Context context){
+        try{
+            PackageInfo info=context.getPackageManager().getPackageInfo(
+                    context.getPackageName(), PackageManager.GET_SIGNATURES);
+            byte[]cert=info.signatures[0].toByteArray();
+            MessageDigest md=MessageDigest.getInstance("SHA1");
+            byte[]publicKey=md.digest(cert);
+            StringBuffer hexString=new StringBuffer();
+            for(int i=0;i<publicKey.length;i++){
+                String appendString=Integer.toHexString(0xFF&publicKey[i])
+                        .toUpperCase(Locale.US);
+                if(appendString.length()==1)
+                    hexString.append("0");
+                hexString.append(appendString);
+                hexString.append(":");
+            }
+            String result = hexString.toString();
+            return result.substring(0,result.length()-1);
+        }catch(PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }catch(NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void findOnclick() {
@@ -283,7 +317,8 @@ public class MainActivity extends BaseTitleActivity {
         });
     }
 
-    @OnClick({R.id.bt_back_login, R.id.tv_integral_rule, R.id.ll_mine_intrgral_detail, R.id.tv_integral_rank})
+    @OnClick({R.id.bt_back_login, R.id.tv_integral_rule, R.id.ll_mine_intrgral_detail, R.id.tv_integral_rank,
+            R.id.tv_collect_article,R.id.tv_collect_web})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_back_login:
@@ -299,7 +334,13 @@ public class MainActivity extends BaseTitleActivity {
                 break;
             case R.id.tv_integral_rank:
                 ARouter.getInstance().build(Constant.INTEGRALRANK).navigation();
-
+                break;
+            case R.id.tv_collect_article:
+                ARouter.getInstance().build(Constant.COLLECTLIST).navigation();
+                break;
+            case R.id.tv_collect_web:
+                ARouter.getInstance().build(Constant.USERTOOLS).navigation();
+                break;
         }
     }
 
@@ -332,10 +373,4 @@ public class MainActivity extends BaseTitleActivity {
         SaveCookiesInterceptor.clearCookie(context);//清除本地cookie
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 }

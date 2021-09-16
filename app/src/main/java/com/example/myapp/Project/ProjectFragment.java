@@ -78,8 +78,7 @@ public class ProjectFragment extends BaseFragment {
             @Override
             public void onRefresh(RefreshLayout refreshLayout) {//刷新
                 refreshLayout.finishRefresh(200/*,false*/);//传入false表示刷新失败
-                dataBeanList.clear();
-                initProjectListData(curpage,cid);
+                refresh();
             }
         });
         srlProjectTree.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -92,6 +91,14 @@ public class ProjectFragment extends BaseFragment {
         });
         return view;
     }
+
+    public void refresh() {
+        dataBeanList.clear();
+        initProjectListData(curpage,cid);
+    }
+
+
+
     private void initData() {
         initTabData();
         initProjectListData(curpage, cid);

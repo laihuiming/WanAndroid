@@ -1,8 +1,7 @@
-package com.example.myapp.Mine;
+package com.example.myapp.Mine.Intergral;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,11 +11,8 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.example.myapp.Base.BaseActionBar;
 import com.example.myapp.Base.BaseTitleActivity;
 import com.example.myapp.Bean.IntegralDetailBean;
-import com.example.myapp.Bean.UserInfoBean;
 import com.example.myapp.Constant;
 import com.example.myapp.Internet.WanAndroidApiService;
-import com.example.myapp.MainActivity;
-import com.example.myapp.Project.ProjectFragmentAdapter;
 import com.example.myapp.R;
 import com.example.myapp.Util.AddCookiesInterceptor;
 import com.example.myapp.Util.SaveCookiesInterceptor;

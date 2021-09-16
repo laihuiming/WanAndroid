@@ -1,4 +1,4 @@
-package com.example.myapp.Mine;
+package com.example.myapp.Mine.Intergral;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -1,6 +1,7 @@
 package com.example.myapp.Other;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -23,7 +24,8 @@ public class WebViewActivity extends BaseTitleActivity {
     WebView webview;
     @Autowired(name = "path")
     public String path;
-
+    @Autowired(name = "title")
+    public String title;
 
     @Override
     protected void findViews(Bundle savedInstanceState) {
@@ -33,6 +35,9 @@ public class WebViewActivity extends BaseTitleActivity {
         actionBar.hideBack(false);
         actionBar.setTitle("外部页面WebView");
         ARouter.getInstance().inject(this);//获取传过来的path
+        if (!TextUtils.isEmpty(title)){
+            actionBar.setTitle(title);
+        }
         webview.getSettings().setJavaScriptEnabled(true);//如果访问的页面中有Javascript,则WebView必须设置支持Javascript
         webview.setWebViewClient(new WebViewClient());
         webview.loadUrl(path);

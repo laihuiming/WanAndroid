@@ -119,13 +119,6 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
         }else {
             return -1;
         }
-//        if (articleTopList.get(position).getType() == 1){
-//            return TYPE_TOP_VIEW;
-//        }else if (articleList.get(position).getType() == 0){
-//            return TYPE_ARTICLE;
-//        }else {
-//            return super.getItemViewType(position);
-//        }
     }
 
     @Override
@@ -154,10 +147,6 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
                 ((ArticleHolder) holder).tvProject.setVisibility(View.GONE);
             }
         }
-//        if (articleList.get(position).getTags() != null){
-//            articleHolder.tvOfficial.setVisibility(View.VISIBLE);
-//            articleHolder.tvProject.setVisibility(View.VISIBLE);
-//        }
         articleHolder.tvHomepageAuthor.setText("分享人:"+articleList.get(position).getShareUser());
         if (!articleList.get(position).getAuthor().equals("")){
             articleHolder.tvHomepageAuthor.setText("作者："+articleList.get(position).getAuthor());
@@ -174,6 +163,7 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
             public void onClick(View v) {
                 path = articleList.get(position).getLink();
                 ARouter.getInstance().build(Constant.WEBVIEW)
+                        .withString("title",articleList.get(position).getTitle())
                         .withString("path",path)
                         .navigation();
             }
@@ -207,6 +197,7 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
             public void onClick(View v) {
                 path = articleTopList.get(position).getLink();
                 ARouter.getInstance().build(Constant.WEBVIEW)
+                        .withString("title",articleTopList.get(position).getTitle())
                         .withString("path",path)
                         .navigation();
             }

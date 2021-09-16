@@ -1,4 +1,4 @@
-package com.example.myapp.Mine;
+package com.example.myapp.Mine.Intergral;
 
 import android.os.Bundle;
 import android.webkit.WebView;

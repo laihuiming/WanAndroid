@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_article_2"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/ll_collect_dialog"
+        android:orientation="vertical"
+        android:layout_marginBottom="5dp"
+        android:layout_width="330dp"
+        android:layout_height="200dp">
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_collect_title"
+            android:hint="请输入标题"
+            android:background="@drawable/bg_article"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_collect_author"
+            android:hint="请输入作者"
+            android:background="@drawable/bg_article"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_collect_link"
+            android:hint="请输入链接地址"
+            android:gravity="start"
+            android:background="@drawable/bg_article"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_below="@+id/ll_collect_dialog"
+        android:layout_marginBottom="5dp"
+        android:layout_width="330dp"
+        android:layout_height="30dp">
+        <TextView
+            android:id="@+id/tv_collect_left"
+            tools:text="取消"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:textColor="@color/colorPrimary"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <include layout="@layout/split_line_horizontal"/>
+        <TextView
+            android:id="@+id/tv_collect_right"
+            tools:text="确定"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+    </LinearLayout>
+</RelativeLayout>

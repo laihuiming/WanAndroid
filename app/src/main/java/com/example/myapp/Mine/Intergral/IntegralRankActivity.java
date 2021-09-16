@@ -1,4 +1,4 @@
-package com.example.myapp.Mine;
+package com.example.myapp.Mine.Intergral;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.example.myapp.Base.BaseActionBar;
 import com.example.myapp.Base.BaseTitleActivity;
-import com.example.myapp.Bean.IntegralDetailBean;
 import com.example.myapp.Bean.IntegralRankBean;
 import com.example.myapp.Constant;
 import com.example.myapp.Internet.WanAndroidApiService;
