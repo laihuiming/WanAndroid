@@ -18,6 +18,8 @@ import com.example.myapp.Bean.RegisterBean;
 import com.example.myapp.Bean.UserInfoBean;
 import com.example.myapp.Mine.Collect.Collect;
 
+
+import io.reactivex.rxjava3.core.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -31,7 +33,7 @@ public interface WanAndroidApiService {
      * @return
      */
     @GET("/article/list/{page}/json")
-    Call<ArticleBean> loadArticle(@Path("page") int page);
+    Observable<ArticleBean> loadArticle(@Path("page") int page);
 
     /**
      * 首页banner

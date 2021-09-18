@@ -1,6 +1,7 @@
 package com.example.myapp.HomePage;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +37,17 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomePageFragment extends BaseFragment {
@@ -51,13 +58,13 @@ public class HomePageFragment extends BaseFragment {
     FloatingActionButton fabHomepage;
     @BindView(R.id.scrollView)
     NestedScrollView scrollView;
-//    @BindView(R.id.iv_menu_mine)
+    //    @BindView(R.id.iv_menu_mine)
 //    ImageView ivMenuMine;
 //    @BindView(R.id.iv_homepage_find)
 //    ImageView ivHomepageFind;
     @BindView(R.id.rv_homepage)
     RecyclerView rvHomepage;
-//    @BindView(R.id.drawerlayout_mine)
+    //    @BindView(R.id.drawerlayout_mine)
 //    DrawerLayout drawerlayoutMine;
     //    @BindView(R.id.rv_homepage_article)
 //    RecyclerView rvHomepageArticle;
@@ -84,7 +91,7 @@ public class HomePageFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         initView(view);
         initData(page);
-        smartRefreshLayout =view.findViewById(R.id.refreshlayout);
+        smartRefreshLayout = view.findViewById(R.id.refreshlayout);
         smartRefreshLayout.setRefreshHeader(new ClassicsHeader(getContext()));
         smartRefreshLayout.setRefreshFooter(new ClassicsFooter(getContext()));
         smartRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -108,6 +115,7 @@ public class HomePageFragment extends BaseFragment {
         page++;
         initArticleData(page);
     }
+
     protected void refresh() {//刷新
         initArticleData(page);
     }
@@ -136,7 +144,7 @@ public class HomePageFragment extends BaseFragment {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BaseUrl)//获取url
                 .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
         Call<ArticleTopBean> call = wanAndroidApiService.loadArticleTop();//获取首页置顶文章列表
@@ -162,23 +170,49 @@ public class HomePageFragment extends BaseFragment {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BaseUrl)//获取url
                 .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())//支持rxjava
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-        Call<ArticleBean> call = wanAndroidApiService.loadArticle(page);//获取首页文章列表
-        call.enqueue(new Callback<ArticleBean>() {
-            @Override
-            public void onResponse(Call<ArticleBean> call, Response<ArticleBean> response) {
-                ArticleBean articleBean = response.body();//
-                articleList.addAll(articleBean.getData().getDatas());
-                adapter.notifyDataSetChanged();
-            }
+//        Call<ArticleBean> call = wanAndroidApiService.loadArticle(page);//获取首页文章列表
+//        call.enqueue(new Callback<ArticleBean>() {
+//            @Override
+//            public void onResponse(Call<ArticleBean> call, Response<ArticleBean> response) {
+//                ArticleBean articleBean = response.body();//
+//                articleList.addAll(articleBean.getData().getDatas());
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ArticleBean> call, Throwable t) {
+//
+//            }
+//        });
+        Observable<ArticleBean> observable = wanAndroidApiService.loadArticle(page);
+        observable.subscribeOn(Schedulers.io())                //进io线程
+                .observeOn(AndroidSchedulers.mainThread())      //回到主线程
+                .subscribe(new Observer<ArticleBean>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+                        Log.e("使用rxjava请求文章列表：", "开始" );
+                    }
 
-            @Override
-            public void onFailure(Call<ArticleBean> call, Throwable t) {
+                    @Override
+                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull ArticleBean articleBean) {
+                            ArticleBean bean = articleBean;
+                            articleList.addAll(bean.getData().getDatas());
+                            adapter.notifyDataSetChanged();
+                    }
 
-            }
-        });
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                        Log.e("使用rxjava请求文章列表：", "出问题了" );
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.e("使用rxjava请求文章列表：", "请求结束");
+                    }
+                });
     }
 
     private void initBannerView() {
