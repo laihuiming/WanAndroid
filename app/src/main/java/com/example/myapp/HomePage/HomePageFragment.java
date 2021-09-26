@@ -58,18 +58,8 @@ public class HomePageFragment extends BaseFragment {
     FloatingActionButton fabHomepage;
     @BindView(R.id.scrollView)
     NestedScrollView scrollView;
-    //    @BindView(R.id.iv_menu_mine)
-//    ImageView ivMenuMine;
-//    @BindView(R.id.iv_homepage_find)
-//    ImageView ivHomepageFind;
     @BindView(R.id.rv_homepage)
     RecyclerView rvHomepage;
-    //    @BindView(R.id.drawerlayout_mine)
-//    DrawerLayout drawerlayoutMine;
-    //    @BindView(R.id.rv_homepage_article)
-//    RecyclerView rvHomepageArticle;
-//    @BindView(R.id.rv_homepage_article_top)
-//    RecyclerView rvHomepageArticleTop;
     //适配器的数据
     private List<BannerBean.DataBean> bannerList = new ArrayList<>();
     private List<ArticleBean.ArticleDataBean.ArticleDatasBean> articleList = new ArrayList<>();
@@ -147,20 +137,31 @@ public class HomePageFragment extends BaseFragment {
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-        Call<ArticleTopBean> call = wanAndroidApiService.loadArticleTop();//获取首页置顶文章列表
-        call.enqueue(new Callback<ArticleTopBean>() {
-            @Override
-            public void onResponse(Call<ArticleTopBean> call, Response<ArticleTopBean> response) {
-                ArticleTopBean articleTopBean = response.body();//
-                articleTopList.addAll(articleTopBean.getData());
-                adapter.notifyDataSetChanged();
-            }
+        Observable<ArticleTopBean> observable = wanAndroidApiService.loadArticleTop();//获取首页置顶文章列表
+        observable.subscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ArticleTopBean>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
 
-            @Override
-            public void onFailure(Call<ArticleTopBean> call, Throwable t) {
+                    }
 
-            }
-        });
+                    @Override
+                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull ArticleTopBean articleTopBean) {
+                        articleTopList.addAll(articleTopBean.getData());
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     /**
@@ -173,39 +174,25 @@ public class HomePageFragment extends BaseFragment {
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())//支持rxjava
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-//        Call<ArticleBean> call = wanAndroidApiService.loadArticle(page);//获取首页文章列表
-//        call.enqueue(new Callback<ArticleBean>() {
-//            @Override
-//            public void onResponse(Call<ArticleBean> call, Response<ArticleBean> response) {
-//                ArticleBean articleBean = response.body();//
-//                articleList.addAll(articleBean.getData().getDatas());
-//                adapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ArticleBean> call, Throwable t) {
-//
-//            }
-//        });
         Observable<ArticleBean> observable = wanAndroidApiService.loadArticle(page);
         observable.subscribeOn(Schedulers.io())                //进io线程
                 .observeOn(AndroidSchedulers.mainThread())      //回到主线程
                 .subscribe(new Observer<ArticleBean>() {
                     @Override
                     public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-                        Log.e("使用rxjava请求文章列表：", "开始" );
+                        Log.e("使用rxjava请求文章列表：", "开始");
                     }
 
                     @Override
                     public void onNext(@io.reactivex.rxjava3.annotations.NonNull ArticleBean articleBean) {
-                            ArticleBean bean = articleBean;
-                            articleList.addAll(bean.getData().getDatas());
-                            adapter.notifyDataSetChanged();
+                        ArticleBean bean = articleBean;
+                        articleList.addAll(bean.getData().getDatas());
+                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        Log.e("使用rxjava请求文章列表：", "出问题了" );
+                        Log.e("使用rxjava请求文章列表：", "出问题了");
                     }
 
                     @Override
@@ -231,23 +218,35 @@ public class HomePageFragment extends BaseFragment {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BaseUrl)//获取url
                 .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
-
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())//支持rxjava
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-        Call<BannerBean> call = wanAndroidApiService.loadBanner();//获取首页轮播图列表
-        call.enqueue(new Callback<BannerBean>() {
-            @Override
-            public void onResponse(Call<BannerBean> call, Response<BannerBean> response) {
-                BannerBean bannerBean = response.body();//
-                bannerList.addAll(bannerBean.getData());
-                bannerAdapter.notifyDataSetChanged();
-            }
+        Observable<BannerBean> observable = wanAndroidApiService.loadBanner();//获取首页轮播图列表
+        observable.subscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<BannerBean>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
 
-            @Override
-            public void onFailure(Call<BannerBean> call, Throwable t) {
-                Toast.makeText(getActivity(), "数据获取失败", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull BannerBean bannerBean) {
+                        BannerBean bean = bannerBean;
+                        bannerList.addAll(bean.getData());
+                        bannerAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @OnClick({R.id.fab_homepage,})

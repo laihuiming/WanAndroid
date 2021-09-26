@@ -1,5 +1,6 @@
 package com.example.myapp;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,12 @@ import com.example.myapp.Util.SaveCookiesInterceptor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,7 +45,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 @Route(path = "/app/LoginActivity")
 public class LoginActivity extends BaseActivity {
-
+    ProgressDialog progressDialog;
     private static final String TAG = "LoginActivity";
     @BindView(R.id.et_username)
     AppCompatEditText etUsername;
@@ -110,34 +118,71 @@ public class LoginActivity extends BaseActivity {
                 .client(client)
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-        Call<LoginBean> call = wanAndroidApiService.login(etUsername.getText().toString().trim(), etPassword.getText().toString().trim());
-        call.enqueue(new Callback<LoginBean>() {
-            @Override
-            public void onResponse(Call<LoginBean> call, Response<LoginBean> response) {
-                LoginBean loginBean = response.body();
-                if (loginBean.getErrorCode() != 0) {
-                    Toast.makeText(LoginActivity.this, "登录失败：" + loginBean.getErrorMsg(), Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.e(TAG, loginBean.getData().toString());
-                    if (cbRemember.isChecked()){//是否记住账号密码
-                        SPUtils.getInstance().put("username", etUsername.getText().toString().trim());
-                        SPUtils.getInstance().put("password", etPassword.getText().toString().trim());
-                    }else {
-                        SPUtils.getInstance().clear();
+        Observable<LoginBean> observable = wanAndroidApiService.login(etUsername.getText().toString().trim(), etPassword.getText().toString().trim());
+        observable.subscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<LoginBean>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                        progressDialog.show();
                     }
-                    ARouter.getInstance().build(Constant.MAINACTIVITY)
-                            .navigation();
-                    finish();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<LoginBean> call, Throwable t) {
-                Toast.makeText(LoginActivity.this, "数据请求失败，请检查网络", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    @Override
+                    public void onNext(@NonNull LoginBean loginBean) {
+                        if (loginBean.getErrorCode() != 0) {
+                            Toast.makeText(LoginActivity.this, "登录失败：" + loginBean.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, loginBean.getData().toString());
+                            if (cbRemember.isChecked()){//是否记住账号密码
+                                SPUtils.getInstance().put("username", etUsername.getText().toString().trim());
+                                SPUtils.getInstance().put("password", etPassword.getText().toString().trim());
+                            }else {
+                                SPUtils.getInstance().clear();
+                            }
+                            ARouter.getInstance().build(Constant.MAINACTIVITY)
+                                    .navigation();
+                            finish();
+                        }
+                    }
 
-    }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        progressDialog.dismiss();
+                    }
+                });
+//        call.enqueue(new Callback<LoginBean>() {
+//            @Override
+//            public void onResponse(Call<LoginBean> call, Response<LoginBean> response) {
+//                LoginBean loginBean = response.body();
+//                if (loginBean.getErrorCode() != 0) {
+//                    Toast.makeText(LoginActivity.this, "登录失败：" + loginBean.getErrorMsg(), Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Log.e(TAG, loginBean.getData().toString());
+//                    if (cbRemember.isChecked()){//是否记住账号密码
+//                        SPUtils.getInstance().put("username", etUsername.getText().toString().trim());
+//                        SPUtils.getInstance().put("password", etPassword.getText().toString().trim());
+//                    }else {
+//                        SPUtils.getInstance().clear();
+//                    }
+//                    ARouter.getInstance().build(Constant.MAINACTIVITY)
+//                            .navigation();
+//                    finish();
+//                }
+            }
+//
+//            @Override
+//            public void onFailure(Call<LoginBean> call, Throwable t) {
+//                Toast.makeText(LoginActivity.this, "数据请求失败，请检查网络", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

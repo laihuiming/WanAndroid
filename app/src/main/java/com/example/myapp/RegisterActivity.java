@@ -19,6 +19,12 @@ import com.example.myapp.Internet.WanAndroidApiService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -94,29 +100,39 @@ public class RegisterActivity extends BaseActivity {
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-        Call<RegisterBean> call = wanAndroidApiService.register(etRegisterUsername.getText().toString().trim(), etRegisterPassword.getText().toString().trim(), etRegisterRepassword.getText().toString().trim());
-        call.enqueue(new Callback<RegisterBean>() {
-            @Override
-            public void onResponse(Call<RegisterBean> call, Response<RegisterBean> response) {
-                RegisterBean registerBean = response.body();
-                if (registerBean.getErrorCode() != 0) {
-                    Toast.makeText(RegisterActivity.this, "注册失败：" + registerBean.getErrorMsg(), Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.e(TAG, registerBean.getData().toString());
-                    ARouter.getInstance().build(Constant.LOGIN)
-                            .withString("username", etRegisterUsername.getText().toString().trim())
-                            .withString("password", etRegisterPassword.getText().toString().trim())
-                            .navigation();
-                    finish();
-                }
-            }
+        Observable<RegisterBean> observable = wanAndroidApiService.register(etRegisterUsername.getText().toString().trim(), etRegisterPassword.getText().toString().trim(), etRegisterRepassword.getText().toString().trim());
+        observable.subscribeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<RegisterBean>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
 
-            @Override
-            public void onFailure(Call<RegisterBean> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "数据请求失败，请检查网络", Toast.LENGTH_SHORT).show();
-            }
-        });
+                    }
 
+                    @Override
+                    public void onNext(@NonNull RegisterBean registerBean) {
+                        if (registerBean.getErrorCode() != 0) {
+                            Toast.makeText(RegisterActivity.this, "注册失败：" + registerBean.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, registerBean.getData().toString());
+                            ARouter.getInstance().build(Constant.LOGIN)
+                                    .withString("username", etRegisterUsername.getText().toString().trim())
+                                    .withString("password", etRegisterPassword.getText().toString().trim())
+                                    .navigation();
+                            finish();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
 

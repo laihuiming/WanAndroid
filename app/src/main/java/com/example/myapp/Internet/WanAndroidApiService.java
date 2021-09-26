@@ -40,14 +40,14 @@ public interface WanAndroidApiService {
      * @return
      */
     @GET("/banner/json")
-    Call<BannerBean> loadBanner();
+    Observable<BannerBean> loadBanner();
 
     /**
      * 首页置顶文章
      * @return
      */
     @GET("/article/top/json")
-    Call<ArticleTopBean> loadArticleTop();
+    Observable<ArticleTopBean> loadArticleTop();
 
     /**
      * 登录
@@ -56,7 +56,7 @@ public interface WanAndroidApiService {
      * @return
      */
     @POST("/user/login")
-    Call<LoginBean> login(@Query("username") String username,@Query("password") String password);
+    Observable<LoginBean> login(@Query("username") String username,@Query("password") String password);
 
     /**
      * 注册
@@ -66,7 +66,7 @@ public interface WanAndroidApiService {
      * @return
      */
     @POST("/user/register")
-    Call<RegisterBean> register(@Query("username") String username,@Query("password") String password,@Query("repassword") String repassword);
+    Observable<RegisterBean> register(@Query("username") String username,@Query("password") String password,@Query("repassword") String repassword);
 
     /**
      * 登出
