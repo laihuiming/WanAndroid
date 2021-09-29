@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:visibility="gone"
+    android:id="@+id/ll_loading"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.mingle.widget.LoadingView
+        android:id="@+id/loading_view"
+        app:loadingText="憋急！在加载了！"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

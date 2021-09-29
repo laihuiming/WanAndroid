@@ -16,6 +16,8 @@ import com.example.myapp.Bean.ProjectListBean;
 import com.example.myapp.Bean.ProjectTreeBean;
 import com.example.myapp.Bean.RegisterBean;
 import com.example.myapp.Bean.UserInfoBean;
+import com.example.myapp.Bean.WXArticleBean;
+import com.example.myapp.Bean.WXArticleListBean;
 import com.example.myapp.Mine.Collect.Collect;
 
 
@@ -101,7 +103,7 @@ public interface WanAndroidApiService {
      * @return
      */
     @GET("/project/tree/json")
-    Call<ProjectTreeBean> loadProjectTree();
+    Observable<ProjectTreeBean> loadProjectTree();
 
     /**
      * 项目列表
@@ -110,7 +112,7 @@ public interface WanAndroidApiService {
      * @return
      */
     @GET("/project/list/{page}/json")
-    Call<ProjectListBean> loadProjectList(@Path("page") int page,@Query("cid") int cid);
+    Observable<ProjectListBean> loadProjectList(@Path("page") int page,@Query("cid") int cid);
 
     /**
      * 导航数据
@@ -187,4 +189,15 @@ public interface WanAndroidApiService {
     @POST("/lg/collect/deletetool/json")
     Call<CollectBean> deleteTool(@Query("id") Integer id);
 
+    /**
+     * 微信公众号列表
+     */
+    @GET("/wxarticle/chapters/json")
+    Observable<WXArticleBean> loadWXArticle();
+
+    /**
+     * 微信公众号文章
+     */
+    @GET("/wxarticle/list/{id}/{page}/json")
+    Observable<WXArticleListBean> loadWXArticleList(@Path("id") int id,@Path("page") int page);
 }

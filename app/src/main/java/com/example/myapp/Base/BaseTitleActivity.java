@@ -37,6 +37,8 @@ public abstract class BaseTitleActivity extends BaseActivity {
 
     ViewGroup llNoData;
 
+    ViewGroup llLoading;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +58,7 @@ public abstract class BaseTitleActivity extends BaseActivity {
         llContent = findViewById(R.id.ll_content);
         llNetWorkError = findViewById(R.id.ll_net_work_error);
         llNoData = findViewById(R.id.ll_no_data);
+        llLoading = findViewById(R.id.ll_loading);
     }
 
     private void initListener() {
@@ -90,6 +93,7 @@ public abstract class BaseTitleActivity extends BaseActivity {
         llContent.setVisibility(View.VISIBLE);
         llNetWorkError.setVisibility(View.GONE);
         llNoData.setVisibility(View.GONE);
+        llLoading.setVisibility(View.GONE);
     }
 
     protected abstract void findViews(Bundle savedInstanceState);

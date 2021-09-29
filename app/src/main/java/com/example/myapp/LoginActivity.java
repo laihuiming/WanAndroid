@@ -24,6 +24,7 @@ import com.example.myapp.Base.BaseActivity;
 import com.example.myapp.Bean.LoginBean;
 import com.example.myapp.Internet.WanAndroidApiService;
 import com.example.myapp.Util.AddCookiesInterceptor;
+import com.example.myapp.Util.LoginDialog;
 import com.example.myapp.Util.SaveCookiesInterceptor;
 
 import butterknife.BindView;
@@ -124,8 +125,8 @@ public class LoginActivity extends BaseActivity {
                 .subscribe(new Observer<LoginBean>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
-                        progressDialog.show();
+                        LoginDialog loginDialog = LoginDialog.getInstance();
+                        loginDialog.showDialog(context);
                     }
 
                     @Override
@@ -153,7 +154,8 @@ public class LoginActivity extends BaseActivity {
 
                     @Override
                     public void onComplete() {
-                        progressDialog.dismiss();
+                        LoginDialog loginDialog = LoginDialog.getInstance();
+                        loginDialog.hide(context);
                     }
                 });
 //        call.enqueue(new Callback<LoginBean>() {

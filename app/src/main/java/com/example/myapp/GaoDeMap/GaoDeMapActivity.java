@@ -2,6 +2,7 @@ package com.example.myapp.GaoDeMap;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.amap.api.location.AMapLocation;
@@ -11,12 +12,20 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.navi.view.RouteOverLay;
+import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.route.BusRouteResult;
+import com.amap.api.services.route.DrivePath;
+import com.amap.api.services.route.DriveRouteResult;
+import com.amap.api.services.route.RideRouteResult;
 import com.amap.api.services.route.RouteSearch;
+import com.amap.api.services.route.WalkRouteResult;
 import com.blankj.utilcode.util.TimeUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.myapp.Base.BaseActionBar;
 import com.example.myapp.Base.BaseTitleActivity;
+import com.example.myapp.GaoDeMap.Overlay.DrivingRouteOverlay;
 import com.example.myapp.R;
 
 
@@ -127,8 +136,61 @@ public class GaoDeMapActivity extends BaseTitleActivity {
         final RouteSearch.FromAndTo fromAndTo= new RouteSearch.FromAndTo(mStartPoint,mEndPoint);
         int mode = RouteSearch.DRIVING_SINGLE_DEFAULT;
         routeSearch = new RouteSearch(this);//初始化搜索对象
-        routeSearch.setRouteSearchListener(this);
+        routeSearch.setRouteSearchListener(new RouteSearch.OnRouteSearchListener() {
+            @Override
+            public void onBusRouteSearched(BusRouteResult busRouteResult, int i) {
+
+            }
+
+            @Override
+            public void onDriveRouteSearched(DriveRouteResult driveRouteResult, int i) {
+                ToastUtils.showShort("驾车模式导航开启");
+                if (i == AMapException.CODE_AMAP_SUCCESS){
+                    if (driveRouteResult != null&&driveRouteResult.getPaths() != null){
+                        if (driveRouteResult.getPaths().size()==0){
+                            final DrivePath drivePath = driveRouteResult.getPaths().get(0);
+                            if (drivePath == null){
+                                return;
+                            }
+                            DrivingRouteOverlay overLay = new DrivingRouteOverlay(
+                                    getContext(),
+                                    aMap,
+                                    drivePath,
+                                    mStartPoint,
+                                    mEndPoint,null);
+                            overLay.setNodeIconVisibility(false);//设置节点marker是否显示
+                            overLay.setIsColorfulline(true);//是否用颜色展示交通拥堵情况，默认true
+                            overLay.removeFromMap();//去掉DriveLineOverlay上的线段和标记
+                            overLay.addToMap();//添加驾车路线添加到地图上显示
+                            overLay.zoomToSpan();//移动镜头到当前的视角
+                        }else {
+                            ToastUtils.showShort("导航数据是空的in，请检查");
+                            Log.e("导航数据", ": "+driveRouteResult.toString());
+                        }
+                    }else {
+                        ToastUtils.showShort("导航数据是空的out，请检查");
+                        Log.e("导航数据", ": "+driveRouteResult.toString());
+                    }
+                }else {
+                    ToastUtils.showShort("错误"+i);
+                    Log.e("驾车导航异常，", "onDriveRouteSearched: "+i);
+                }
+            }
+
+            @Override
+            public void onWalkRouteSearched(WalkRouteResult walkRouteResult, int i) {
+
+            }
+
+            @Override
+            public void onRideRouteSearched(RideRouteResult rideRouteResult, int i) {
+
+            }
+        });
         RouteSearch.DriveRouteQuery query = new RouteSearch.DriveRouteQuery(fromAndTo,mode,null,null,"");
+        // 第一个参数表示路径规划的起点和终点，第二个参数表示驾车模式，
+        // 第三个参数表示途经点，第四个参数表示避让区域，第五个参数表示避让道路
+
     }
 
     //TODO 步行路线导航

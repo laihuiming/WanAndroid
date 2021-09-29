@@ -28,7 +28,7 @@ import com.example.myapp.Bean.UserInfoBean;
 import com.example.myapp.HomePage.HomePageFragment;
 import com.example.myapp.Internet.WanAndroidApiService;
 import com.example.myapp.Mine.MineFragment;
-import com.example.myapp.OfficialAccount.OfficialAccountFragment;
+import com.example.myapp.WXArticle.WXArticleFragment;
 import com.example.myapp.Project.ProjectFragment;
 import com.example.myapp.Util.AddCookiesInterceptor;
 import com.example.myapp.Util.NoScrollViewPager;
@@ -102,7 +102,7 @@ public class MainActivity extends BaseTitleActivity {
     UserInfoBean userInfoData;
 
 
-    private Fragment[] mfragments = {new HomePageFragment(), new ProjectFragment(), new OfficialAccountFragment(), new MineFragment()};
+    private Fragment[] mfragments = {new HomePageFragment(), new ProjectFragment(), new WXArticleFragment(), new MineFragment()};
     private String[] mtitles = {"首页", "项目", "公众号", "我的"};
     //未选中
     private int[] unImage = {R.mipmap.unhomepage, R.mipmap.unproject, R.mipmap.unofficial_account, R.mipmap.unmine};

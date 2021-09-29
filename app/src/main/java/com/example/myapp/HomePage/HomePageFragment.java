@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.example.myapp.Base.BaseFragment;
 import com.example.myapp.Bean.ArticleBean;
 import com.example.myapp.Bean.ArticleTopBean;
@@ -39,9 +41,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.BiFunction;
+import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,8 +57,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomePageFragment extends BaseFragment {
 
-    @BindView(R.id.banner_homepage)
-    Banner bannerHomepage;
+//    @BindView(R.id.banner_homepage)
+//    Banner banner;
     @BindView(R.id.fab_homepage)
     FloatingActionButton fabHomepage;
     @BindView(R.id.scrollView)
@@ -66,9 +71,10 @@ public class HomePageFragment extends BaseFragment {
     private List<ArticleTopBean.ArticleTopDataBean> articleTopList = new ArrayList<>();
 
     RecyclerView articleRecycleView;
+    LinearLayout llLoading;
 
     //适配器
-    private HomePageBannerAdapter bannerAdapter;
+//    private HomePageBannerAdapter bannerAdapter;
 
     private HomePageFragmentAdapter adapter;
     public int page = 0;
@@ -79,6 +85,7 @@ public class HomePageFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_homepage, container, false);
         ButterKnife.bind(this, view);
+        llLoading = view.findViewById(R.id.ll_loading);
         initView(view);
         initData(page);
         smartRefreshLayout = view.findViewById(R.id.refreshlayout);
@@ -107,54 +114,64 @@ public class HomePageFragment extends BaseFragment {
     }
 
     protected void refresh() {//刷新
-        initArticleData(page);
+        initData(0);
     }
 
     public void initData(int page) {
+        llLoading.setVisibility(View.VISIBLE);
         initBannerData();
-        initArticleTopData();
+//        initArticleTopData();
+        initTwoData(page);
         initArticleData(page);
+        llLoading.setVisibility(View.GONE);
     }
 
 
     private void initView(View view) {
-        initBannerView();
+//        initBannerView();
         articleRecycleView = view.findViewById(R.id.rv_homepage);
         LinearLayoutManager articlemanager = new LinearLayoutManager(getActivity());//创建线性布局管理器
         articlemanager.setOrientation(LinearLayoutManager.VERTICAL);//添加垂直布局
         articleRecycleView.setLayoutManager(articlemanager);//将线性布局管理器添加到recyclerview中
-        adapter = new HomePageFragmentAdapter(getContext(), articleList, articleTopList);//实例化适配器
+        articleRecycleView.setNestedScrollingEnabled(false);//禁止滑动
+        adapter = new HomePageFragmentAdapter(getContext(), articleList, articleTopList, bannerList);//实例化适配器
         articleRecycleView.setAdapter(adapter);//添加适配器
     }
 
-    /**
-     * 置顶文章数据
-     */
-    private void initArticleTopData() {
+    private void initTwoData(int page) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constant.BaseUrl)//获取url
                 .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
         WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
-        Observable<ArticleTopBean> observable = wanAndroidApiService.loadArticleTop();//获取首页置顶文章列表
-        observable.subscribeOn(Schedulers.io())
+        Observable<ArticleTopBean> observableTop = wanAndroidApiService.loadArticleTop();
+//        Observable<ArticleBean> observable = wanAndroidApiService.loadArticle(page);
+        observableTop.concatMap(new Function<ArticleTopBean, ObservableSource<ArticleBean>>() {
+            @Override
+            public ObservableSource<ArticleBean> apply(ArticleTopBean articleTopBean) throws Throwable {
+                articleTopList.addAll(articleTopBean.getData());
+                return wanAndroidApiService.loadArticle(page);
+            }
+        }).subscribeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ArticleTopBean>() {
+                .subscribe(new Observer<ArticleBean>() {
                     @Override
                     public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-
+                        Log.e("TAG", "onSubscribe: " + articleTopList.size());
+                        ToastUtils.showShort("开始加载列表");
                     }
 
                     @Override
-                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull ArticleTopBean articleTopBean) {
-                        articleTopList.addAll(articleTopBean.getData());
+                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull ArticleBean articleBean) {
+                        articleList.addAll(articleBean.getData().getDatas());
+                        Log.e("TAG", "onNext: " + articleList.size());
                         adapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-
+                        Log.e("TAG", "onError: " + e.toString());
                     }
 
                     @Override
@@ -163,6 +180,44 @@ public class HomePageFragment extends BaseFragment {
                     }
                 });
     }
+
+
+//    /**
+//     * 置顶文章数据
+//     */
+//    private void initArticleTopData() {
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(Constant.BaseUrl)//获取url
+//                .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
+//                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+//                .build();
+//        WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
+//        Observable<ArticleTopBean> observable = wanAndroidApiService.loadArticleTop();//获取首页置顶文章列表
+//        observable.subscribeOn(Schedulers.io())
+//                .subscribeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Observer<ArticleTopBean>() {
+//                    @Override
+//                    public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(@io.reactivex.rxjava3.annotations.NonNull ArticleTopBean articleTopBean) {
+//                        articleTopList.addAll(articleTopBean.getData());
+//                        adapter.notifyDataSetChanged();
+//                    }
+//
+//                    @Override
+//                    public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+//                        Log.e("articleTop", "onError: "+e.toString());
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
+//    }
 
     /**
      * 文章数据
@@ -197,19 +252,19 @@ public class HomePageFragment extends BaseFragment {
 
                     @Override
                     public void onComplete() {
-                        Log.e("使用rxjava请求文章列表：", "请求结束");
+                        Log.e("使用rxjava请求文章列表：", "请求结束" + articleList.size());
                     }
                 });
     }
-
-    private void initBannerView() {
-        bannerAdapter = new HomePageBannerAdapter(bannerList);
-        bannerHomepage.setAdapter(bannerAdapter)
-                .isAutoLoop(true)//自动循环
-                .setIndicator(new CircleIndicator(getActivity()))
-                .addBannerLifecycleObserver(this)
-                .start();
-    }
+//
+//    private void initBannerView() {
+//        bannerAdapter = new HomePageBannerAdapter(bannerList);
+//        bannerHomepage.setAdapter(bannerAdapter)
+//                .isAutoLoop(true)//自动循环
+//                .setIndicator(new CircleIndicator(getActivity()))
+//                .addBannerLifecycleObserver(this)
+//                .start();
+//    }
 
     /**
      * 轮播图数据
@@ -234,7 +289,7 @@ public class HomePageFragment extends BaseFragment {
                     public void onNext(@io.reactivex.rxjava3.annotations.NonNull BannerBean bannerBean) {
                         BannerBean bean = bannerBean;
                         bannerList.addAll(bean.getData());
-                        bannerAdapter.notifyDataSetChanged();
+//                        adapter.notifyDataSetChanged();
                     }
 
                     @Override

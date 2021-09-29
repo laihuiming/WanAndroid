@@ -31,6 +31,7 @@
 
             <include layout="@layout/layout_no_data" />
 
+            <include layout="@layout/layout_loading"/>
 
     </LinearLayout>
 
