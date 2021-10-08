@@ -1,9 +1,14 @@
 package com.example.myapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,7 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
@@ -28,6 +36,7 @@ import com.example.myapp.Bean.UserInfoBean;
 import com.example.myapp.HomePage.HomePageFragment;
 import com.example.myapp.Internet.WanAndroidApiService;
 import com.example.myapp.Mine.MineFragment;
+import com.example.myapp.Util.HeadViewDialog;
 import com.example.myapp.WXArticle.WXArticleFragment;
 import com.example.myapp.Project.ProjectFragment;
 import com.example.myapp.Util.AddCookiesInterceptor;
@@ -35,6 +44,8 @@ import com.example.myapp.Util.NoScrollViewPager;
 import com.example.myapp.Util.SaveCookiesInterceptor;
 import com.google.android.material.tabs.TabLayout;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
@@ -53,6 +64,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Route(path = "/app/MainActivity")
 public class MainActivity extends BaseTitleActivity {
 
+    private static final int TAKE_CAMERA = 101;
+    private static final int IMAGE_REQUEST_CODE = 1;
     @BindView(R.id.vp_main)
     NoScrollViewPager vpMain;
     @BindView(R.id.tb_main)
@@ -79,8 +92,8 @@ public class MainActivity extends BaseTitleActivity {
     Button btBackLogin;
     @BindView(R.id.drawerlayout_mine)
     DrawerLayout drawerlayoutMine;
-    @BindView(R.id.tv_head)
-    ImageView tvHead;
+    @BindView(R.id.iv_head)
+    ImageView ivHead;
     @BindView(R.id.tv_userid)
     TextView tvUserid;
     @BindView(R.id.tv_userem)
@@ -98,6 +111,8 @@ public class MainActivity extends BaseTitleActivity {
     @BindView(R.id.ll_mine_intrgral_detail)
     LinearLayout llMineIntrgralDetail;
     private MainAdapter adapter;
+
+    private Uri imageUri;
 
     UserInfoBean userInfoData;
 
@@ -129,34 +144,6 @@ public class MainActivity extends BaseTitleActivity {
         actionBar.setImgROnClickListener(v -> findOnclick());
         actionBar.setMineOnClickListener(v -> mineOnclick());
         initView();
-        sHA1(this);
-        Log.e("SHA1:", ":"+sHA1(context));
-        System.out.println("SHA1:"+sHA1(context));
-    }
-    public static String sHA1(Context context){
-        try{
-            PackageInfo info=context.getPackageManager().getPackageInfo(
-                    context.getPackageName(), PackageManager.GET_SIGNATURES);
-            byte[]cert=info.signatures[0].toByteArray();
-            MessageDigest md=MessageDigest.getInstance("SHA1");
-            byte[]publicKey=md.digest(cert);
-            StringBuffer hexString=new StringBuffer();
-            for(int i=0;i<publicKey.length;i++){
-                String appendString=Integer.toHexString(0xFF&publicKey[i])
-                        .toUpperCase(Locale.US);
-                if(appendString.length()==1)
-                    hexString.append("0");
-                hexString.append(appendString);
-                hexString.append(":");
-            }
-            String result = hexString.toString();
-            return result.substring(0,result.length()-1);
-        }catch(PackageManager.NameNotFoundException e){
-            e.printStackTrace();
-        }catch(NoSuchAlgorithmException e){
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private void findOnclick() {
@@ -318,7 +305,7 @@ public class MainActivity extends BaseTitleActivity {
     }
 
     @OnClick({R.id.bt_back_login, R.id.tv_integral_rule, R.id.ll_mine_intrgral_detail, R.id.tv_integral_rank,
-            R.id.tv_collect_article,R.id.tv_collect_web})
+            R.id.tv_collect_article,R.id.tv_collect_web,R.id.iv_head})
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_back_login:
@@ -341,8 +328,48 @@ public class MainActivity extends BaseTitleActivity {
             case R.id.tv_collect_web:
                 ARouter.getInstance().build(Constant.USERTOOLS).navigation();
                 break;
+            case R.id.iv_head:
+//                File outputImage = new File(getExternalCacheDir())
+                HeadViewDialog dialog = HeadViewDialog.getInstance();
+                dialog.showDialog(context);
+                dialog.DialogOnClickListener(new HeadViewDialog.DialogOnClickListener() {//点击头像，弹出dialog，选择打开相机、相册、取消
+                    @Override
+                    public void cameraOnClickListener(AlertDialog dialog) {
+                        File outputImage = new File(getExternalCacheDir(),"output_image.jpg");
+                        try {
+                            if (outputImage.exists()){
+                                outputImage.delete();
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+
+                        //大于等于版本24(android 7.0)
+                        imageUri = FileProvider.getUriForFile(MainActivity.this,"com.example.myapp.fileprovider",outputImage);
+                        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+                        startActivityForResult(intent,TAKE_CAMERA);
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void albumOnClickListener(AlertDialog dialog) {
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        startActivityForResult(intent ,IMAGE_REQUEST_CODE);
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void cancelOnClickListener(AlertDialog dialog) {
+                        dialog.dismiss();
+                    }
+                });
+
         }
     }
+
+
+
 
     //退出，并清除本地cookie
     private void logout() {
@@ -373,4 +400,24 @@ public class MainActivity extends BaseTitleActivity {
         SaveCookiesInterceptor.clearCookie(context);//清除本地cookie
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case TAKE_CAMERA:
+                if (resultCode == RESULT_OK){
+                    try {
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                        ivHead.setImageBitmap(bitmap);
+                    }catch (FileNotFoundException e){
+                        e.fillInStackTrace();
+                    }
+                }
+                break;
+            case IMAGE_REQUEST_CODE:
+
+            default:
+                break;
+        }
+    }
 }

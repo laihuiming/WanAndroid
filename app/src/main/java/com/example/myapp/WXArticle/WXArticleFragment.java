@@ -19,6 +19,7 @@ import com.example.myapp.Bean.WXArticleListBean;
 import com.example.myapp.Constant;
 import com.example.myapp.Internet.WanAndroidApiService;
 import com.example.myapp.R;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +37,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WXArticleFragment extends BaseFragment {
 
-    WXArticleAdatper adatper;
+//    WXArticleAdatper adatper;
+    WXArticleListAdapter adatper;
     RecyclerView rv;
-    LinearLayout llLoading;
+    TabLayout mTab;
+//    LinearLayout llLoading;
     List<WXArticleBean.DataBean> authorData = new ArrayList<>();
     List<WXArticleListBean.DataBean.DatasBean> articleList = new ArrayList<>();
     int id = -1,page = -1;
@@ -46,12 +49,52 @@ public class WXArticleFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_wx_article, container, false);
-        llLoading = view.findViewById(R.id.ll_loading);
-        llLoading.setVisibility(View.VISIBLE);
+//        llLoading = view.findViewById(R.id.ll_loading);
+        initTab(view);
         initView(view);
         initData();
         return view;
     }
+
+    private void initTab(View view) {
+        mTab = view.findViewById(R.id.tab_wx_article);
+        //初始化
+        mTab.getTabAt(0);
+        for (int i = 0; i < authorData.size(); i++) {
+            TabLayout.Tab tab = mTab.newTab();
+            tab.setText(authorData.get(i).getName());
+            mTab.addTab(tab);
+        }
+        //监听
+        mTab.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                articleList.clear();
+                id = authorData.get(position).getId();
+                initArticleData(id);
+//                adatper.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                //未选中状态
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                //重新选中
+            }
+        });
+    }
+
+//    private WXArticleAdatper.AuthorOnClickListener authorOnClickListener = new WXArticleAdatper.AuthorOnClickListener() {
+//        @Override
+//        public void loadArticleList(int id) {
+//
+//            initArticleData(id);
+//        }
+//    };
 
     private void initData() {
         Retrofit retrofit = new Retrofit.Builder()
@@ -74,7 +117,7 @@ public class WXArticleFragment extends BaseFragment {
         }).subscribe(new Observer<WXArticleListBean>() {
             @Override
             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-                llLoading.setVisibility(View.VISIBLE);
+//                llLoading.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -86,12 +129,12 @@ public class WXArticleFragment extends BaseFragment {
             @Override
             public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
                 ToastUtils.showShort("公众号网络请求错误，请检查");
-                Log.e("WX", "onError: "+e.toString() );
+                Log.e("WX", "onError: "+e.toString());
             }
 
             @Override
             public void onComplete() {
-                llLoading.setVisibility(View.GONE);
+//                llLoading.setVisibility(View.GONE);
             }
         });
 
@@ -102,8 +145,43 @@ public class WXArticleFragment extends BaseFragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(manager);
-        adatper = new WXArticleAdatper(getContext(), authorData,articleList);
+        adatper = new WXArticleListAdapter(getContext(),articleList);
         rv.setAdapter(adatper);
+    }
+
+    private void initArticleData(int id){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constant.BaseUrl)//获取url
+                .addConverterFactory(GsonConverterFactory.create())//Gson转换工具
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+                .build();
+        WanAndroidApiService wanAndroidApiService = retrofit.create(WanAndroidApiService.class);//拿到接口
+        Observable<WXArticleListBean> observable = wanAndroidApiService.loadWXArticleList(id, page);
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<WXArticleListBean>() {
+            @Override
+            public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
+//                llLoading.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onNext(@io.reactivex.rxjava3.annotations.NonNull WXArticleListBean wxArticleListBean) {
+                articleList.addAll(wxArticleListBean.getData().getDatas());
+                adatper.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                ToastUtils.showShort("公众号网络请求错误，请检查");
+                Log.e("WX", "onError: "+e.toString());
+            }
+
+            @Override
+            public void onComplete() {
+//                llLoading.setVisibility(View.GONE);
+            }
+        });
     }
 
 }

@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1">
+    android:layout_width="250dp"
+    android:id="@+id/ll_wx_article_list"
+    android:layout_height="wrap_content">
     <TextView
         android:id="@+id/tv_wx_title"
         tools:text="测测测测所所所所所所所111111111111111111111111"
