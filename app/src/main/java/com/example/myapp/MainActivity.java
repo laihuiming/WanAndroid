@@ -29,6 +29,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.bumptech.glide.Glide;
 import com.example.myapp.Base.BaseActionBar;
 import com.example.myapp.Base.BaseTitleActivity;
 import com.example.myapp.Bean.LogoutBean;
@@ -64,8 +65,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Route(path = "/app/MainActivity")
 public class MainActivity extends BaseTitleActivity {
 
-    private static final int TAKE_CAMERA = 101;
-    private static final int IMAGE_REQUEST_CODE = 1;
+    private static final int TAKE_CAMERA = 1;
+    private static final int CHOOSE_PHOTO = 2;
     @BindView(R.id.vp_main)
     NoScrollViewPager vpMain;
     @BindView(R.id.tb_main)
@@ -355,7 +356,7 @@ public class MainActivity extends BaseTitleActivity {
                     @Override
                     public void albumOnClickListener(AlertDialog dialog) {
                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(intent ,IMAGE_REQUEST_CODE);
+                        startActivityForResult(intent ,CHOOSE_PHOTO);
                         dialog.dismiss();
                     }
 
@@ -408,14 +409,19 @@ public class MainActivity extends BaseTitleActivity {
                 if (resultCode == RESULT_OK){
                     try {
                         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                        ivHead.setImageBitmap(bitmap);
+                        Glide.with(context)
+                                .load(bitmap)
+                                .into(ivHead);
+//                        ivHead.setImageBitmap(bitmap);//替换照片 TODO 在这把头像照片存到本地，下次登录时直接调用
                     }catch (FileNotFoundException e){
                         e.fillInStackTrace();
                     }
                 }
                 break;
-            case IMAGE_REQUEST_CODE:
-
+            case CHOOSE_PHOTO:
+                Glide.with(context)
+                        .load(data.getData())
+                        .into(ivHead);
             default:
                 break;
         }
