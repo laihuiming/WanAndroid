@@ -191,7 +191,7 @@ public class ProjectFragment extends BaseFragment {
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        ToastUtils.showShort("你网络炸了？");
+                        ToastUtils.showShort("你网络炸了？"+e.toString());
                     }
 
                     @Override

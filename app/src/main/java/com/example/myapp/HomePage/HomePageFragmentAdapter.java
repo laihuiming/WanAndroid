@@ -74,7 +74,8 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
         TextView tvHomepageTopClass;
         @BindView(R.id.tv_homepage_top_time)
         TextView tvHomepageTopTime;
-
+        @BindView(R.id.iv_homepage_top_collect)
+        ImageView ivHomepageTopCollect;
         public ArticleTopHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -97,7 +98,8 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
         TextView tvHomepageTime;
         @BindView(R.id.tv_fresh)
         TextView tvFresh;
-
+        @BindView(R.id.iv_homepage_collect)
+        ImageView ivHomepageCollect;
         public ArticleHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -212,6 +214,11 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
         }
         articleHolder.tvHomepageClass.setText("分类:" + articleList.get(position).getSuperChapterName() + "/" + articleList.get(position).getChapterName());
         articleHolder.tvHomepageTime.setText("时间:" + articleList.get(position).getNiceShareDate());
+        if (articleList.get(position).getCollect()){
+            articleHolder.ivHomepageCollect.setImageResource(R.mipmap.collect);
+        }else {
+            articleHolder.ivHomepageCollect.setImageResource(R.mipmap.uncollect);
+        }
         articleHolder.tvArticle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,6 +254,11 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
         articleTopHolder.tvHomepageTopAuthor.setText("作者：" + articleTopList.get(position).getAuthor());
         articleTopHolder.tvHomepageTopClass.setText("分类：" + articleTopList.get(position).getSuperChapterName() + "/" + articleTopList.get(position).getChapterName());
         articleTopHolder.tvHomepageTopTime.setText("时间:" + articleTopList.get(position).getNiceShareDate());
+        if (articleTopList.get(position).getCollect()) {
+            articleTopHolder.ivHomepageTopCollect.setImageResource(R.mipmap.collect);
+        }else {
+            articleTopHolder.ivHomepageTopCollect.setImageResource(R.mipmap.uncollect);
+        }
         articleTopHolder.tvArticleTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

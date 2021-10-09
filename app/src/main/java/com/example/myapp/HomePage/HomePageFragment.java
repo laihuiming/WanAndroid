@@ -247,7 +247,7 @@ public class HomePageFragment extends BaseFragment {
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                        Log.e("使用rxjava请求文章列表：", "出问题了");
+                        Log.e("使用rxjava请求文章列表：", "出问题了"+e.toString());
                     }
 
                     @Override
@@ -282,7 +282,7 @@ public class HomePageFragment extends BaseFragment {
                 .subscribe(new Observer<BannerBean>() {
                     @Override
                     public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
-
+                        bannerList.clear();
                     }
 
                     @Override
@@ -294,7 +294,7 @@ public class HomePageFragment extends BaseFragment {
 
                     @Override
                     public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-
+                        Log.e("Banner", "onError: "+e.toString());
                     }
 
                     @Override

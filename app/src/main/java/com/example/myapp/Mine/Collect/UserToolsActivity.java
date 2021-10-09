@@ -68,6 +68,7 @@ public class UserToolsActivity extends BaseTitleActivity {
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                refreshLayout.finishLoadMore(200/*,false*/);//传入false表示加载失败
                 beanList.clear();
                 initData();
             }
@@ -75,7 +76,7 @@ public class UserToolsActivity extends BaseTitleActivity {
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
-
+                refreshLayout.finishLoadMore(200/*,false*/);//传入false表示加载失败
             }
         });
     }

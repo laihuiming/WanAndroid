@@ -85,7 +85,16 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="25dp"
                 android:text="分类：xx/xx" />
+            <ImageView
+                android:id="@+id/iv_homepage_collect"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:src="@mipmap/collect"
+                android:layout_width="20dp"
+                android:layout_height="20dp"/>
         </RelativeLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -66,6 +66,7 @@ public class WXArticleListAdapter extends RecyclerView.Adapter<WXArticleListAdap
             public void onClick(View v) {
                 if (!articleList.get(position).getCollect()){
                     Collect.collect(context,articleList.get(position).getId());
+                    wXrefreshOnClickListener.refresh();
                 }else {
                     Dialog dialog = Dialog.getInstance();
                     dialog.dialogOnClickListener(new Dialog.DialogOnClickListener() {
@@ -78,6 +79,7 @@ public class WXArticleListAdapter extends RecyclerView.Adapter<WXArticleListAdap
                         public void confirmOnClickListener(AlertDialog dialog) {
                             Collect.uncollect(context,articleList.get(position).getId());
                             dialog.dismiss();
+                            wXrefreshOnClickListener.refresh();
                         }
                     });
                 }
@@ -103,5 +105,17 @@ public class WXArticleListAdapter extends RecyclerView.Adapter<WXArticleListAdap
             ivWxCollect = itemView.findViewById(R.id.iv_wx_collect);
             layout = itemView.findViewById(R.id.ll_wx_article_list);
         }
+    }
+
+
+
+    public interface WXrefreshOnClickListener{
+        void refresh();
+    }
+
+    private WXrefreshOnClickListener wXrefreshOnClickListener;
+
+    public void setRefreshOnClickListener(WXrefreshOnClickListener wXrefreshOnClickListener){
+        this.wXrefreshOnClickListener = wXrefreshOnClickListener;
     }
 }
