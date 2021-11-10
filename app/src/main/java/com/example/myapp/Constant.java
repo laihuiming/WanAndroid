@@ -29,4 +29,6 @@ public class Constant {
     public static final String USERTOOLS = "/app/UserToolsActivity";
 
     public static final String GAODEMAP = "/app/GaoDeMapActivity";
+
+    public static final String WELCOME = "/app/WelcomeActivity";
 }

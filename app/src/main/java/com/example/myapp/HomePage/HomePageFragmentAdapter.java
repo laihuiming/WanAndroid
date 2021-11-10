@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.example.myapp.Bean.ArticleBean;
@@ -19,6 +21,7 @@ import com.example.myapp.Constant;
 import com.example.myapp.R;
 import com.youth.banner.Banner;
 import com.youth.banner.indicator.CircleIndicator;
+import com.youth.banner.transformer.ScaleInTransformer;
 
 import java.util.List;
 
@@ -113,8 +116,10 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
             return new ArticleTopHolder(LayoutInflater.from(context).inflate(R.layout.item_homepage_article_top, parent, false));
         } else if (viewType == TYPE_ARTICLE) {
             return new ArticleHolder(LayoutInflater.from(context).inflate(R.layout.item_homepage_article, parent, false));
-        } else {
+        } else if (viewType == TYPE_BANNER_VIEW){
             return new BannerViewHolder(LayoutInflater.from(context).inflate(R.layout.item_banner, parent, false));
+        }else {
+            return null;
         }
     }
 
@@ -126,12 +131,15 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
                 Log.e("Banner", "onBindViewHolder: " + "加载了banner条目");
                 BannerViewHolder bannerViewHolder = (BannerViewHolder) holder;
                 bannerAdapter = new HomePageBannerAdapter(bannerDatas);
+                CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+                compositePageTransformer.addTransformer(new ScaleInTransformer());
+                compositePageTransformer.addTransformer(new MarginPageTransformer(10));
                 bannerViewHolder.banner.setAdapter(bannerAdapter)
                         .isAutoLoop(true)//自动循环
                         .setIndicator(new CircleIndicator(context))
-//                .addBannerLifecycleObserver(this)
+                        .setPageTransformer(compositePageTransformer)
                         .start();
-//                Banner(holder);
+
                 break;
             case TYPE_ARTICLE:
                 int articlePosition = position - articleTopList.size() - 1;
@@ -140,6 +148,8 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
             case TYPE_TOP_VIEW:
                 int topPosition = position - 1;
                 ArticleTop(topPosition, holder);
+                break;
+            default:
                 break;
         }
 
@@ -154,32 +164,14 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
         } else if (1 + articleTopList.size() <= position && position < 1 + articleList.size() + articleTopList.size()) {
             return TYPE_ARTICLE;
         } else {
-            return super.getItemViewType(position);
+            return -1;
         }
-//        return super.getItemViewType(position);
-//        if (position<articleTopList.size()){
-//            return TYPE_TOP_VIEW;
-//        }else if ((articleTopList.size()<=position)&&(position<articleList.size()+articleTopList.size())){//大于置顶文章数，小于总数
-//            return TYPE_ARTICLE;
-//        }else {
-//            return -1;
-//        }
     }
 
     @Override
     public int getItemCount() {
         return 1 + articleList.size() + articleTopList.size();
     }
-
-//    public void Banner(RecyclerView.ViewHolder holder){
-//        BannerViewHolder bannerViewHolder = (BannerViewHolder) holder;
-//        ((BannerViewHolder) holder).bannerAdapter = new HomePageBannerAdapter(bannerDatas);
-//        bannerViewHolder.banner.setAdapter(((BannerViewHolder) holder).bannerAdapter)
-//                .isAutoLoop(true)//自动循环
-//                .setIndicator(new CircleIndicator(context))
-////                .addBannerLifecycleObserver(this)
-//                .start();
-//    }
 
     /**
      * 首页文章数据展示
@@ -240,10 +232,6 @@ public class HomePageFragmentAdapter extends RecyclerView.Adapter {
     public void ArticleTop(int position, RecyclerView.ViewHolder holder) {
         ArticleTopHolder articleTopHolder = (ArticleTopHolder) holder;
         topTagsList = articleTopList.get(position).getTags();
-//        if (!articleTopList.get(position).getTags().equals("[]")){
-//            articleTopHolder.tvPublish.setVisibility(View.VISIBLE);
-//            articleTopHolder.tvQA.setVisibility(View.VISIBLE);
-//        }
         for (int tags = 0; tags < articleTopList.get(position).getTags().size(); tags++) {
             if ((topTagsList.get(tags).name.equals("本站发布")) || (topTagsList.get(tags).name.equals("问答"))) {
                 articleTopHolder.tvPublish.setVisibility(View.VISIBLE);

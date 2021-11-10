@@ -154,7 +154,7 @@ public class HomePageFragment extends BaseFragment {
                 return wanAndroidApiService.loadArticle(page);
             }
         }).subscribeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<ArticleBean>() {
                     @Override
                     public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
