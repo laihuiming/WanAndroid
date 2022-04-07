@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.blankj.utilcode.util.ToastUtils;
 import com.example.myapp.Base.BaseFragment;
 import com.example.myapp.Constant;
 import com.example.myapp.R;
@@ -34,7 +35,8 @@ public class MineFragment extends BaseFragment {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_gaode_map:
-            ARouter.getInstance().build(Constant.GAODEMAP).navigation();
+//            ARouter.getInstance().build(Constant.GAODEMAP).navigation();
+                ToastUtils.showShort("功能已弃用！");
         }
     }
 }

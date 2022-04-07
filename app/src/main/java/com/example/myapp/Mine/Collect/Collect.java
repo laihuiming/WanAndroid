@@ -185,7 +185,7 @@ public class Collect{
 
             @Override
             public void onFailure(Call<CollectToolsBean> call, Throwable t) {
-                ToastUtils.showShort("数据请求失败，请检查网络");
+                ToastUtils.showShort("数据请求失败，请检查网络"+t.toString());
             }
         });
     }

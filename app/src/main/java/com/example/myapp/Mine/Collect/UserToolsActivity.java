@@ -1,10 +1,12 @@
 package com.example.myapp.Mine.Collect;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,11 +14,13 @@ import com.alibaba.android.arouter.facade.annotation.Route;
 import com.blankj.utilcode.util.ToastUtils;
 import com.example.myapp.Base.BaseActionBar;
 import com.example.myapp.Base.BaseTitleActivity;
+import com.example.myapp.Bean.Collect.CollectObject;
 import com.example.myapp.Bean.Collect.CollectToolsBean;
 import com.example.myapp.Constant;
 import com.example.myapp.Internet.WanAndroidApiService;
 import com.example.myapp.R;
 import com.example.myapp.Util.AddCookiesInterceptor;
+import com.example.myapp.Util.CollectDialog;
 import com.example.myapp.Util.SaveCookiesInterceptor;
 import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.ClassicsHeader;
@@ -40,9 +44,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by laihm on 2021/9/13
+ * 收藏网站
  */
 @Route(path = "/app/UserToolsActivity")
-public class UserToolsActivity extends BaseTitleActivity {
+public class UserToolsActivity extends BaseTitleActivity implements View.OnClickListener {
 
     TextView mTvEdit;
     TextView mTvFinish;
@@ -50,7 +55,7 @@ public class UserToolsActivity extends BaseTitleActivity {
     UserToolsAdapter adapter;
     SmartRefreshLayout refreshLayout;
     int code = 0;//改变按钮状态，初始为0不显示，1时显示
-
+    Context context = getContext();
     List<CollectToolsBean.DataBean> beanList = new ArrayList<>();
 
     @Override
@@ -58,19 +63,20 @@ public class UserToolsActivity extends BaseTitleActivity {
         BaseActionBar actionBar = findViewById(R.id.base_bar);
         actionBar.hideMine(true);
         actionBar.hideBack(false);
+        actionBar.setImgR(getDrawable(R.mipmap.add_r));
+        actionBar.setImgROnClickListener(this);
         actionBar.setTitle("收藏网站列表");
         ButterKnife.bind(this);
         initData();
         initView();
         refreshLayout = findViewById(R.id.srl_user_tools);
-        refreshLayout.setRefreshHeader(new ClassicsHeader(this));
-        refreshLayout.setRefreshFooter(new ClassicsFooter(this));
+        refreshLayout.setRefreshHeader(new ClassicsHeader(context));
+        refreshLayout.setRefreshFooter(new ClassicsFooter(context));
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                refreshLayout.finishLoadMore(200/*,false*/);//传入false表示加载失败
-                beanList.clear();
-                initData();
+                refreshLayout.finishRefresh(200/*,false*/);//传入false表示加载失败
+                refresh.refresh();
             }
         });
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
@@ -153,6 +159,25 @@ public class UserToolsActivity extends BaseTitleActivity {
                 mTvEdit.setVisibility(View.VISIBLE);
                 mTvFinish.setVisibility(View.GONE);
                 ToastUtils.showShort("编辑完成");
+                break;
+            case R.id.iv_right:
+                CollectDialog collectDialog = CollectDialog.getInstance();
+                collectDialog.showCollectDialog(getContext(),false);
+                collectDialog.setCollectDialogOnClickListener(new CollectDialog.CollectDialogOnClickListener() {
+                    @Override
+                    public void cancelOnClickListener(AlertDialog dialog) {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void confirmOnClickListener(AlertDialog dialog, CollectObject object) {
+                        dialog.dismiss();
+                        String title = object.getTitle();
+                        String link = object.getLink();
+                        Collect.addTool(getContext(),title,link);
+                        refresh.refresh();
+                    }
+                });
         }
     }
 

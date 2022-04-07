@@ -27,7 +27,7 @@ public class CollectDialog {
         return new CollectDialog();
     }
 
-    public static void showCollectDialog(Context context) {
+    public static void showCollectDialog(Context context,Boolean visibility) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         final AlertDialog collectDialog = builder.create();
         collectDialog.show();
@@ -41,6 +41,11 @@ public class CollectDialog {
         View view = View.inflate(context, R.layout.collect_dialog, null);
         etCollectTitle = view.findViewById(R.id.et_collect_title);
         etCollectAuthor = view.findViewById(R.id.et_collect_author);
+        if (visibility){
+            etCollectAuthor.setVisibility(View.VISIBLE);
+        }else {
+            etCollectAuthor.setVisibility(View.GONE);
+        }
         etCollectLink = view.findViewById(R.id.et_collect_link);
         tvCollectLeft = view.findViewById(R.id.tv_collect_left);
         tvCollectRight = view.findViewById(R.id.tv_collect_right);
@@ -61,7 +66,11 @@ public class CollectDialog {
                 String link = etCollectLink.getText().toString();
                 CollectObject object = new CollectObject();
                 object.setTitle(title);
-                object.setAuthor(author);
+                if (visibility) {
+                    object.setAuthor(author);
+                }else {
+                    object.setAuthor("");
+                }
                 object.setLink(link);
                 collectDialogOnClickListener.confirmOnClickListener(collectDialog,object);
             }
@@ -69,7 +78,6 @@ public class CollectDialog {
         collectDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         collectDialog.getWindow().setContentView(view);
     }
-
 
     public interface CollectDialogOnClickListener{
         void cancelOnClickListener(AlertDialog dialog);//取消

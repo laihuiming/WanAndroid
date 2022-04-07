@@ -153,7 +153,7 @@ public class CollectListActivity extends BaseTitleActivity implements View.OnCli
     public void onClick(View v) {
         if (v.getId()==R.id.fab_collect){
             CollectDialog collectDialog = CollectDialog.getInstance();
-            collectDialog.showCollectDialog(context);
+            collectDialog.showCollectDialog(context,true);
 
             collectDialog.setCollectDialogOnClickListener(new CollectDialog.CollectDialogOnClickListener() {
                 @Override
